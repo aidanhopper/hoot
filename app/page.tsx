@@ -11,7 +11,7 @@ const Home = () => {
 
   console.log(answer)
 
-  const questionJson = {
+  const questionJson: JSON = {
     "asdf": "123"
   };
   
