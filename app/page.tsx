@@ -11,13 +11,10 @@ const Home = () => {
 
   console.log(answer)
 
-  const questionJson: JSON = {};
-  
   // eventually i want to be able to pass Quetsion Instance a json
   return (
       <div className="bg-white h-screen font-sans overflow-hidden">
         <QuestionInstance
-          questionJson={questionJson}
           setAnswer={setAnswer}
         />
       </div>

@@ -6,7 +6,7 @@ import AnswerButton from './answerbutton';
 import QuestionScreen from './questionscreen';
 
 type QuestionInstanceProps = {
-  questionJson: JSON,
+  questionJson?: JSON,
   setAnswer: (num: number) => void 
 }
 
