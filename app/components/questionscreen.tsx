@@ -9,7 +9,7 @@ type QuestionScreenProps = {
   answers: string[],
   className?: string,
   selectedIndex: number,
-  setSelectedIndex: () => void
+  setSelectedIndex: (number) => void
 }
 
 const QuestionScreen = (props: QuestionScreenProps) => {
