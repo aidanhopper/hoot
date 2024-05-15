@@ -7,13 +7,15 @@ import React, { useState } from 'react'
 type QuestionScreenProps = {
   question: string,
   answers: string[],
-  correctAnswer: number,
   className?: string,
+  selectedIndex: number,
+  setSelectedIndex: Function
 }
 
 const QuestionScreen = (props: QuestionScreenProps) => {
 
-  const [selectedIndex, setSelectedIndex] = useState(-1);
+  // need to extract this after some time
+
 
   return (
     <div className={props.className as string}>
@@ -27,16 +29,16 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               color="bg-green-300"
               borderColor="border-green-500"
               id={0 as number}
-              selected={selectedIndex}
-              callback={() => {setSelectedIndex(0)}}>
+              selected={props.selectedIndex}
+              callback={() => {props.setSelectedIndex(0)}}>
               {props.answers[0]}
             </AnswerButton>
             <AnswerButton 
               color="bg-blue-300"
               borderColor="border-blue-500"
               id={1 as number}
-              selected={selectedIndex}
-              callback={() => {setSelectedIndex(1)}}>
+              selected={props.selectedIndex}
+              callback={() => {props.setSelectedIndex(1)}}>
               {props.answers[1]}
             </AnswerButton>
           </div>
@@ -45,16 +47,16 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               color="bg-yellow-300"
               borderColor="border-yellow-500"
               id={2 as number}
-              selected={selectedIndex}
-              callback={() => {setSelectedIndex(2)}}>
+              selected={props.selectedIndex}
+              callback={() => {props.setSelectedIndex(2)}}>
               {props.answers[2]}
             </AnswerButton>
             <AnswerButton
               color="bg-purple-300"
               borderColor="border-purple-500"
               id={3 as number}
-              selected={selectedIndex}
-              callback={() => {setSelectedIndex(3)}}>
+              selected={props.selectedIndex}
+              callback={() => {props.setSelectedIndex(3)}}>
               {props.answers[3]}
             </AnswerButton>
           </div>
