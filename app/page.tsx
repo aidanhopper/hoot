@@ -11,9 +11,7 @@ const Home = () => {
 
   console.log(answer)
 
-  const questionJson: JSON = {
-    "asdf": "123"
-  };
+  const questionJson: JSON = {};
   
   // eventually i want to be able to pass Quetsion Instance a json
   return (
