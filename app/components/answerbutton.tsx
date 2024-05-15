@@ -4,7 +4,7 @@ type AnswerButtonProps = {
   borderColor: string,
   id: number,
   selected: number,
-  callback: Function,
+  callback: () => void,
 }
 
 const AnswerButton = ({ children, color, borderColor, id, selected, callback }: 

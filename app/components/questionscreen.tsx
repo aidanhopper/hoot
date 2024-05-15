@@ -9,7 +9,7 @@ type QuestionScreenProps = {
   answers: string[],
   className?: string,
   selectedIndex: number,
-  setSelectedIndex: Function
+  setSelectedIndex: () => void
 }
 
 const QuestionScreen = (props: QuestionScreenProps) => {
@@ -28,7 +28,7 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               borderColor="border-green-500"
               id={0 as number}
               selected={props.selectedIndex}
-              callback={ (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => props.setSelectedIndex(0) }>
+              callback={ () => props.setSelectedIndex(0) }>
               {props.answers[0]}
             </AnswerButton>
             <AnswerButton 
@@ -36,7 +36,7 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               borderColor="border-blue-500"
               id={1 as number}
               selected={props.selectedIndex}
-              callback={ (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => props.setSelectedIndex(1) }>
+              callback={ () => props.setSelectedIndex(1) }>
               {props.answers[1]}
             </AnswerButton>
           </div>
@@ -46,7 +46,7 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               borderColor="border-yellow-500"
               id={2 as number}
               selected={props.selectedIndex}
-              callback={ (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => props.setSelectedIndex(2) }>
+              callback={ () => props.setSelectedIndex(2) }>
               {props.answers[2]}
             </AnswerButton>
             <AnswerButton
@@ -54,7 +54,7 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               borderColor="border-purple-500"
               id={3 as number}
               selected={props.selectedIndex}
-              callback={ (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => props.setSelectedIndex(3) }>
+              callback={ () => props.setSelectedIndex(3) }>
               {props.answers[3]}
             </AnswerButton>
           </div>
