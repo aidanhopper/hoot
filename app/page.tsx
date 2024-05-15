@@ -10,11 +10,16 @@ const Home = () => {
   const [ answer, setAnswer ] = useState(-2);
 
   console.log(answer)
+
+  const questionJson = {
+    "asdf": "123"
+  };
   
   // eventually i want to be able to pass Quetsion Instance a json
   return (
       <div className="bg-white h-screen font-sans overflow-hidden">
         <QuestionInstance
+          questionJson={questionJson}
           setAnswer={setAnswer}
         />
       </div>

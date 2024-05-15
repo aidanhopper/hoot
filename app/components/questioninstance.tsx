@@ -54,7 +54,7 @@ const QuestionInstance = ({ questionJson, setAnswer }: QuestionInstanceProps) =>
   // TIMES UP
   // GO TO NEXT QUESTION
   if (seconds === timeSlice) {
-    props.setAnswer(selectedIndex);
+    setAnswer(selectedIndex);
   }
 
   // should try to use react context to retrieve state from child components
