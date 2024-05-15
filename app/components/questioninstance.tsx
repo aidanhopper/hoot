@@ -14,7 +14,6 @@ const QuestionInstance = ({ questionJson, setAnswer }: QuestionInstanceProps) =>
   
   // place holder values
   const question = "what time is it?";
-  const correctAnswer = 0;
   const answerArray = ["1", "123", "3", "4"];
 
   const [seconds, setSeconds] = useState(0);
@@ -64,7 +63,6 @@ const QuestionInstance = ({ questionJson, setAnswer }: QuestionInstanceProps) =>
       <div className="flex-auto"/>
       <div className="flex-auto"/>
       <QuestionScreen
-        correctAnswer={correctAnswer}
         question={question}
         className="flex-auto"
         answers={answerArray}
