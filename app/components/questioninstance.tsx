@@ -7,7 +7,7 @@ import QuestionScreen from './questionscreen';
 
 type QuestionInstanceProps = {
   questionJson: JSON,
-  setAnswer: () => void 
+  setAnswer: (number) => void 
 }
 
 const QuestionInstance = ({ questionJson, setAnswer }: QuestionInstanceProps) => {
