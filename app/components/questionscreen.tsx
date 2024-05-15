@@ -30,7 +30,7 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               id={0 as number}
               selected={props.selectedIndex}
               callback={ () => props.setSelectedIndex(0) }>
-              {props.answers[0] as React.ReactElement}
+              {props.answers[0] as JSX.Element}
             </AnswerButton>
             <AnswerButton 
               color="bg-blue-300"
@@ -38,7 +38,7 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               id={1 as number}
               selected={props.selectedIndex}
               callback={ () => props.setSelectedIndex(1) }>
-              {props.answers[1] as React.ReactElement}
+              {props.answers[1] as JSX.Element}
             </AnswerButton>
           </div>
           <div className="flex flex-auto">
@@ -48,7 +48,7 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               id={2 as number}
               selected={props.selectedIndex}
               callback={ () => props.setSelectedIndex(2) }>
-              {props.answers[2] as React.ReactElement}
+              {props.answers[2] as JSX.Element}
             </AnswerButton>
             <AnswerButton
               color="bg-purple-300"
@@ -56,7 +56,7 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               id={3 as number}
               selected={props.selectedIndex}
               callback={ () => props.setSelectedIndex(3) }>
-              {props.answers[3] as React.ReactElement}
+              {props.answers[3] as JSX.Element}
             </AnswerButton>
           </div>
         </div>
