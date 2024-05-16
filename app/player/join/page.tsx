@@ -70,8 +70,8 @@ const Join = () => {
               if (document !== null) {
                 const name = (document.getElementById("playerName") as HTMLInputElement).value;
                 const id = (document.getElementById("playerID") as HTMLInputElement).value;
-                (document.getElementById("playerName").value as HTMLInputElement) = "";
-                (document.getElementById("playerID").value as HTMLInputElement) = "";
+                (document.getElementById("playerName") as HTMLInputElement).value = "";
+                (document.getElementById("playerID") as HTMLInputElement).value = "";
                 validateInput(name, id);
               }
             }}
