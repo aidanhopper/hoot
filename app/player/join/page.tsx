@@ -67,11 +67,13 @@ const Join = () => {
           <button className="bg-red-500 p-2 rounded-xl shadow-[5px_5px_2px_rgb(0,0,0,0.25)] 
             duration-[0.3s] hover:scale-[105%] hover:saturate-110"
             onClick={() => {
-              const name = document.getElementById("playerName").value;
-              const id = document.getElementById("playerID").value;
-              document.getElementById("playerName").value = "";
-              document.getElementById("playerID").value = "";
-              validateInput(name, id);
+              if (document !== null) {
+                const name = document.getElementById("playerName").value;
+                const id = document.getElementById("playerID").value;
+                document.getElementById("playerName").value = "";
+                document.getElementById("playerID").value = "";
+                validateInput(name, id);
+              }
             }}
           >
             Enter
