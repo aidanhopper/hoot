@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import QuestionInstance from './components/questioninstance';
-import Question from './components/question'
 
 const Game = () => {
 
