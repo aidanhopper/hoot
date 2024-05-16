@@ -12,9 +12,9 @@ const Session = () => {
 
   // open 
   
-  const [ name, setName ] = useState(undefined);
-  const [ id, setId ] = useState(undefined);
-  const [ room, setRoom ] = useState(undefined);
+  const [ name, setName ] = useState<string | undefined>(undefined);
+  const [ id, setId ] = useState<string | undefined>(undefined);
+  const [ room, setRoom ] = useState<any>(undefined);
 
   useEffect(() => {
 
@@ -28,8 +28,8 @@ const Session = () => {
   }, []);
 
   // -2 means time is not up yet
-  const [ answer, setAnswer ] = useState(undefined);
-  const [ currentQuestion, setCurrentQuestion ] = useState(0);
+  const [ answer, setAnswer ] = useState<number | undefined>(undefined);
+  const [ currentQuestion, setCurrentQuestion ] = useState<number>(0);
 
   if (answer !== undefined) {
     

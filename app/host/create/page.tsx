@@ -12,7 +12,7 @@ const Create = () => {
                 .toString(16).toUpperCase();
   }
 
-  const [ id, setId ] = useState(undefined);
+  const [ id, setId ] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     setId(generateID());
