@@ -15,7 +15,7 @@ const Join = () => {
     });
   }
 
-  const validateInput = (name: string, id: number) => {
+  const validateInput = (name: string, id: string) => {
     console.log(name);
     console.log(id);
     
