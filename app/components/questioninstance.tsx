@@ -22,6 +22,8 @@ const QuestionInstance = ({ questionJson, setAnswer }: QuestionInstanceProps) =>
   // the amount of time on the timer in seconds
   const timeSlice = 5;
 
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+
   // sets a interval that increments every 1 milisecond
   useEffect(() => {
 
@@ -29,6 +31,9 @@ const QuestionInstance = ({ questionJson, setAnswer }: QuestionInstanceProps) =>
       if (seconds <= timeSlice*1000)
         setSeconds(seconds + 1);
     }, 1);
+
+    if (timeSlice*1000 <= seconds)
+      setAnswer(selectedIndex)
 
     return () => clearInterval(interval);
 
@@ -48,14 +53,10 @@ const QuestionInstance = ({ questionJson, setAnswer }: QuestionInstanceProps) =>
 
   }, [docWidth]);
 
-  const [selectedIndex, setSelectedIndex] = useState(-1);
 
   // TIMES UP
   // GO TO NEXT QUESTION
-  if (seconds === timeSlice) {
-    useEffect(() => setAnswer(selectedIndex), []);
-  }
-
+  
   // should try to use react context to retrieve state from child components
 
   return (
@@ -72,7 +73,7 @@ const QuestionInstance = ({ questionJson, setAnswer }: QuestionInstanceProps) =>
       <div className="flex-auto">
         <div className="absolute bottom-0 bg-blue-500 h-5 duration-1 ease-linear" 
              style={{width: Math.min(
-               (seconds/1000*docWidth) / (timeSlice-1), docWidth)
+               (seconds/1000*docWidth) / (timeSlice), docWidth)
         }}/>
       </div>
     </div>

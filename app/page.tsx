@@ -1,24 +1,36 @@
-'use client'
-
-import { createContext, useState } from 'react';
-import QuestionInstance from './components/questioninstance';
-
+import Game from './game';
+import { createClient } from '@supabase/supabase-js';
 
 const Home = () => {
 
-  // -2 means time is not up yet
-  const [ answer, setAnswer ] = useState(-2);
+    /* 
+    const client = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL,
+                                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
-  console.log(answer)
+    const roomOne = client.channel('room-one')
 
-  // eventually i want to be able to pass Quetsion Instance a json
-  return (
+    const messageRecieved = (payload) => {
+      console.log(payload); 
+    }
+  
+    roomOne.send({
+      type: 'broadcast',
+      event: 'test',
+      payload: { message: 'hello, world' },
+    });
+
+    roomOne.on(
+      'broadcast', 
+      { event: 'test' },
+      (payload) => messageRecieved(payload),
+    ).subscribe();
+    */
+
+    return (
       <div className="bg-white h-screen font-sans overflow-hidden">
-        <QuestionInstance
-          setAnswer={setAnswer}
-        />
+        <Game/> 
       </div>
-  );
+    );
 
 }
 
