@@ -68,10 +68,10 @@ const Join = () => {
             duration-[0.3s] hover:scale-[105%] hover:saturate-110"
             onClick={() => {
               if (document !== null) {
-                const name = document.getElementById("playerName").value;
-                const id = document.getElementById("playerID").value;
-                document.getElementById("playerName").value = "";
-                document.getElementById("playerID").value = "";
+                const name = document?.getElementById("playerName").value;
+                const id = document?.getElementById("playerID").value;
+                document?.getElementById("playerName").value = "";
+                document?.getElementById("playerID").value = "";
                 validateInput(name, id);
               }
             }}
