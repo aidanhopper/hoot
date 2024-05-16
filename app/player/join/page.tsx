@@ -30,7 +30,7 @@ const Join = () => {
       return;
     }
 
-    if (isNaN(id)) {
+    if (isNaN(parseInt(id))) {
       inputErr();
       return;
     }
