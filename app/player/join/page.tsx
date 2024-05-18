@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import client from '../../client'
 
 const Join = () => {
 
@@ -16,8 +17,6 @@ const Join = () => {
   }
 
   const validateInput = (name: string, id: string) => {
-    console.log(name);
-    console.log(id);
     
     // make sure input is good
     if (name === "" || id === "") {
@@ -30,11 +29,14 @@ const Join = () => {
       return;
     }
 
-    if (isNaN(parseInt(id))) {
-      inputErr();
-      return;
-    }
-    
+    const channel  = client.channel(id);
+
+    channel.send({
+      type: 'broadcast',
+      event: 'player join',
+      payload: {},
+    });
+
     // go to session page
     const uriName = encodeURIComponent(name);
     const uriId = encodeURIComponent(id);

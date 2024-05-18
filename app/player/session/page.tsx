@@ -2,19 +2,18 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import client from '../../client';
 import QuestionInstance from '../../components/questioninstance';
 
 const Session = () => {
 
-  const client = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL,
-                              process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-
-  // open 
-  
   const [ name, setName ] = useState<string | undefined>(undefined);
   const [ id, setId ] = useState<string | undefined>(undefined);
-  const [ room, setRoom ] = useState<any>(undefined);
+  const [ channel, setChannel ] = useState<any>(undefined);
+  const [ wait, setWait ] = useState(true);
+  const [ answer, setAnswer ] = useState<number | undefined>(undefined);
+  const [ currentQuestion, setCurrentQuestion ] = useState<number>(0);
+
 
   useEffect(() => {
 
@@ -23,17 +22,39 @@ const Session = () => {
     
     setName(urlParams.get('name'));
     setId(urlParams.get('id'));
-    setRoom(client.channel(urlParams.get('id')));
+
+    const ch = client.channel(urlParams.get('id'))
+
+    ch.on(
+      'broadcast',
+      { event: 'start' },
+      (payload) => {
+        console.log('RECIEVED PAYLOAD');
+        setWait(false);
+      },
+    ).subscribe();
+    
+    setChannel(ch);
 
   }, []);
 
-  // -2 means time is not up yet
-  const [ answer, setAnswer ] = useState<number | undefined>(undefined);
-  const [ currentQuestion, setCurrentQuestion ] = useState<number>(0);
+
+  if (wait) {
+
+    if (channel !== undefined) {
+      console.log(id);
+    }
+
+    return (
+      <div className="bg-white h-screen text-center text-6xl content-center font-sans overflow-hidden">
+        Waiting for host to start the game
+      </div>
+    );
+  }
 
   if (answer !== undefined) {
     
-    room.send({
+    channel.send({
       type: 'broadcast',
       event: 'answer given',
       payload: { 
