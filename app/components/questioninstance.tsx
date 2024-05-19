@@ -5,8 +5,14 @@ import React, { useEffect, useState } from 'react';
 import AnswerButton from './answerbutton';
 import QuestionScreen from './questionscreen';
 
+type question = {
+  question: string;
+  answers: string[];
+  answer: number;
+}
+
 type QuestionInstanceProps = {
-  q: JSON,
+  q: question,
   setAnswer: (num: number) => void 
 
 }
