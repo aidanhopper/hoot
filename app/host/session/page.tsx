@@ -1,6 +1,6 @@
 'use client'
 
-import deck from '../../deck';
+import deck from '../../deck.json';
 import { useState, useEffect } from 'react';
 
 
