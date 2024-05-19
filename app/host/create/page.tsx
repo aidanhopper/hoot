@@ -13,7 +13,6 @@ const Create = () => {
   const [ lobby, setLobby ] = useState<number | string>("XXXX")
 
   const playerJoinCallback = (payload) => {
-    setPlayers(players + 1);
   }
 
   const genLobby = () => {
