@@ -4,9 +4,6 @@ import client from './client'
 
 const lobbyExists = async (lobby: string) => {
 
-  var { data, error } = await client
-    .from('lobbies')
-    .eq('lobby', lobby);
 
 }
 
