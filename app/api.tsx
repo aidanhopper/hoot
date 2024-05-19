@@ -2,8 +2,12 @@
 
 import client from './client'
 
+/*
 const lobbyExists = async (lobby: string) => {
 
+  var { data, error } = await client
+    .from('lobbies')
+    .eq('lobby')
 
 }
 
@@ -24,18 +28,19 @@ const createLobby = async (lobby: string) => {
   return true;
 
 }
+*/
 
 const insertPlayer = async (lobby: string, name: string) => {
 
   // get players array
-  var data = await client
+  var { data, err } = await client
     .from('lobbies')
     .select('players')
     .eq('lobby', lobby)
 
   // lobby does not exist
-  
-
+  if (err)
+    return false;
 
   // get players array
   const players = data.data[0].players;
@@ -49,7 +54,7 @@ const insertPlayer = async (lobby: string, name: string) => {
 
   // update players array associated with the lobby 
   // with the new players array
-  var data = await client
+  var { data, error } = await client
     .from('lobbies')
     .update({ players: players })
     .eq('lobby', lobby);
