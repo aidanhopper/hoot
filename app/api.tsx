@@ -39,8 +39,8 @@ const insertPlayer = async (lobby: string, name: string) => {
     .eq('lobby', lobby)
 
   // lobby does not exist
-  if (err)
-    return false;
+  //if (err)
+    //return false;
 
   // get players array
   const players = data.data[0].players;
