@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import client from '../../client';
 import QuestionInstance from '../../components/questioninstance';
-import deck from '../../deck'
+import deck from '../../deck.json'
 
 const Session = () => {
 
