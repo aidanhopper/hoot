@@ -6,11 +6,12 @@ import AnswerButton from './answerbutton';
 import QuestionScreen from './questionscreen';
 
 type QuestionInstanceProps = {
-  questionJson?: JSON,
+  q: JSON,
   setAnswer: (num: number) => void 
+
 }
 
-const QuestionInstance = ({ questionJson, setAnswer }: QuestionInstanceProps) => {
+const QuestionInstance = ({ q, setAnswer }: QuestionInstanceProps) => {
   
   // place holder values
   const question = "what time is it?";
@@ -54,19 +55,15 @@ const QuestionInstance = ({ questionJson, setAnswer }: QuestionInstanceProps) =>
   }, [docWidth]);
 
 
-  // TIMES UP
-  // GO TO NEXT QUESTION
-  
-  // should try to use react context to retrieve state from child components
 
   return (
     <div className="flex h-screen flex-col m-auto">
       <div className="flex-auto"/>
       <div className="flex-auto"/>
       <QuestionScreen
-        question={question}
+        question={q['question']}
         className="flex-auto"
-        answers={answerArray}
+        answers={q['answers']}
         selectedIndex={selectedIndex}
         setSelectedIndex={setSelectedIndex}
       />

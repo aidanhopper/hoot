@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { insertPlayer } from '../../api';
 import client from '../../client'
 
 const Join = () => {
@@ -29,22 +30,21 @@ const Join = () => {
       return;
     }
 
-    const channel  = client.channel(id);
+    insertPlayer(id, name).then((success) => {
 
-    channel.send({
-      type: 'broadcast',
-      event: 'player join',
-      payload: {},
+      if (!success) {
+        inputErr();
+        return;
+      }
+
+      const uriName = encodeURIComponent(name);
+      const uriId = encodeURIComponent(id);
+      const uri = `/player/session?name=${uriName}&id=${uriId}`
+
+      router.push(uri);
+
     });
 
-    // go to session page
-    const uriName = encodeURIComponent(name);
-    const uriId = encodeURIComponent(id);
-
-    const uri = `/player/session?name=${uriName}&id=${uriId}`
-
-    router.push(uri);
-    
   }
 
   return (
@@ -72,8 +72,8 @@ const Join = () => {
               if (document !== null) {
                 const name = (document.getElementById("playerName") as HTMLInputElement).value;
                 const id = (document.getElementById("playerID") as HTMLInputElement).value;
-                (document.getElementById("playerName") as HTMLInputElement).value = "";
-                (document.getElementById("playerID") as HTMLInputElement).value = "";
+                //(document.getElementById("playerName") as HTMLInputElement).value = "";
+                //(document.getElementById("playerID") as HTMLInputElement).value = "";
                 validateInput(name, id);
               }
             }}

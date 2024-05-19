@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef } from 'react';
 import client from '../../client';
 import QuestionInstance from '../../components/questioninstance';
+import deck from '../../deck'
 
 const Session = () => {
 
@@ -13,8 +14,30 @@ const Session = () => {
   const [ wait, setWait ] = useState(true);
   const [ answer, setAnswer ] = useState<number | undefined>(undefined);
   const [ currentQuestion, setCurrentQuestion ] = useState<number>(0);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [seconds, setSeconds] = useState(0);
 
+  const qlist = deck['deck'];
 
+  // the amount of time on the timer in seconds
+  const timeSlice = 5;
+
+  // sets a interval that increments every 1 milisecond
+  useEffect(() => {
+
+    const interval = setInterval(() => {
+      if (seconds <= timeSlice*1000)
+        setSeconds(seconds + 1);
+    }, 1);
+
+    if (timeSlice*1000 <= seconds)
+      setAnswer(selectedIndex)
+
+    return () => clearInterval(interval);
+
+  }, [seconds]);
+
+  // subscribe to the wait event and get url parameters
   useEffect(() => {
 
     const queryString = window.location.search;
@@ -38,22 +61,18 @@ const Session = () => {
 
   }, []);
 
-
+  // wait for host to start the game
   if (wait) {
-
-    if (channel !== undefined) {
-      console.log(id);
-    }
-
     return (
-      <div className="bg-white h-screen text-center text-6xl content-center font-sans overflow-hidden">
+      <div className="bg-white h-screen font-bold text-center text-5xl content-center font-sans overflow-hidden">
         Waiting for host to start the game
       </div>
     );
   }
 
+  // time is up for this question
   if (answer !== undefined) {
-    
+
     channel.send({
       type: 'broadcast',
       event: 'answer given',
@@ -64,18 +83,18 @@ const Session = () => {
     });
 
     return (
-      <div className="bg-white h-screen font-sans overflow-hidden">
-        asdf
+      <div className="bg-white h-screen font-sans overflow-hidden text-center content-center font-bold">
+        Waiting to go to the next question
       </div>
     );
+
   }
-  else {
-    return (
-      <div className="bg-white h-screen font-sans overflow-hidden">
-        <QuestionInstance setAnswer={setAnswer}/>
-      </div>
-    );
-  }
+
+  return (
+    <div className="bg-white h-screen font-sans overflow-hidden">
+      <QuestionInstance q={qlist[currentQuestion]} setAnswer={setAnswer}/>
+    </div>
+  );
 
 }
 

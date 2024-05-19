@@ -1,3 +1,24 @@
 {
-  
+  "deck": [
+    {
+      "question": "What is the average case time complexity of quicksort?",
+      "answers": ["O(n)", "O(1)", "O(n^2)", "O(n log n)"],
+      "answer": 3
+    },
+    {
+      "question": "What was radiohead original called",
+      "answers": ["on a friday", "fat sloppy knob", "last tuesday afternoon", "goober gophers"],
+      "answer": 1
+    },
+    {
+      "question": "What is the worst case time complexity of quicksort?",
+      "answers": ["O(n)", "O(1)", "O(n^2)", "O(n log n)"],
+      "answer": 2
+    },
+    {
+      "question": "What is the best case time complexity of bogosort",
+      "answers": ["O(n)", "O(1)", "O(n^2)", "O(n log n)"],
+      "answer": 0
+    }
+  ]
 }

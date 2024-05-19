@@ -3,60 +3,46 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import client from '../../client'
+import { insertPlayer } from '../../api';
 
 const Create = () => {
 
+  /* create the router hook */
   const router = useRouter();
 
-  const [ players, setPlayers ] = useState(0);
-  const [ id, setId ] = useState<string | undefined>(undefined);
-  const [ channel, setChannel ] = useState<any>(undefined);
+  const [ lobby, setLobby ] = useState<number | string>("XXXX")
 
-  useEffect(() => {
+  const playerJoinCallback = (payload) => {
+    setPlayers(players + 1);
+  }
 
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const ch = client.channel(urlParams.get('id'))
-
-    setId(urlParams.get('id'));
-    setChannel(ch);
-
-    ch.on(
-      'broadcast',
-      { event: 'player join' },
-      (payload) => setPlayers(players + 1),
-    ).subscribe();
-
-  }, [players]);
+  const genLobby = () => {
+    return ((Math.floor((Math.random() * 100000)) % 61696) + 3840) 
+                .toString(16).toUpperCase();
+  }
 
   const callback = () => {
-
-    if (id !== undefined) {
-      channel.send({
-        type: 'broadcast',
-        event: 'start',
-        payload: {},
-      });
-
-      router.push("/host/session?" + id);
-
-    }
+    if (lobby !== "XXXX")
+      router.push(`/host/start?lobby=${lobby}`);
   }
+
+  useEffect(() => {
+    setLobby(genLobby);
+  }, []);
+
+  /* sets the states and subscribes to the player join channel */
 
  return (
     <div className="bg-white h-screen font-sans overflow-hidden">
       <div className="text-center m-auto h-screen content-center">
         <div className="text-6xl">
-          ID: {id as unknown as JSX.Element}
+          ID: {lobby as unknown as JSX.Element}
         </div>
         <button className="bg-red-500 text-3xl rounded-xl p-5 m-10 
           shadow-[5px_5px_2px_rgb(0,0,0,0.25)] hover:scale-[105%] hover:saturate-115 duration-100"
           onClick={callback}>
-          Start
+          Create
         </button>
-        <div className="p-5 absolute text-4xl bottom-0">
-          Players: {players}
-        </div>
       </div>
     </div>
   );
