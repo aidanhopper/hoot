@@ -4,6 +4,12 @@ import deck from '../../deck.json';
 import { useState, useEffect } from 'react';
 
 
+type question = {
+  question: string;
+  answers: string[];
+  answer: number;
+}
+
 const Session = () => {
 
   const [ seconds, setSeconds ] = useState(0);
@@ -11,7 +17,7 @@ const Session = () => {
   const [ wait, setWait ] = useState(false);
 
   const timeSlice = 5;
-  const qlist = deck['deck'];
+  const qlist: question[] = deck['deck'];
   const playerData = [];
 
   // set doc width when window loads

@@ -6,6 +6,12 @@ import client from '../../client';
 import QuestionInstance from '../../components/questioninstance';
 import deck from '../../deck.json'
 
+type question = {
+  question: string;
+  answers: string[];
+  answer: number;
+}
+
 const Session = () => {
 
   const [ name, setName ] = useState<string | undefined>(undefined);
@@ -17,7 +23,7 @@ const Session = () => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [seconds, setSeconds] = useState(0);
 
-  const qlist = deck['deck'];
+  const qlist: question[] = deck['deck'];
 
   // the amount of time on the timer in seconds
   const timeSlice = 5;
