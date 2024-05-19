@@ -49,7 +49,7 @@ const insertPlayer = async (lobby: string, name: string) => {
 
   // update players array associated with the lobby 
   // with the new players array
-  var { data, error } = await client
+  var data = await client
     .from('lobbies')
     .update({ players: players })
     .eq('lobby', lobby);
