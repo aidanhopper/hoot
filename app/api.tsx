@@ -33,7 +33,7 @@ const createLobby = async (lobby: string) => {
 const insertPlayer = async (lobby: string, name: string) => {
 
   // get players array
-  var { data, err } = await client
+  let data = await client
     .from('lobbies')
     .select('players')
     .eq('lobby', lobby)
@@ -54,7 +54,7 @@ const insertPlayer = async (lobby: string, name: string) => {
 
   // update players array associated with the lobby 
   // with the new players array
-  var { data, error } = await client
+  data = await client
     .from('lobbies')
     .update({ players: players })
     .eq('lobby', lobby);
