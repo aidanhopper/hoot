@@ -7,14 +7,8 @@ const Home = () => {
 
     const router = useRouter();
 
-    const generateID = () => {
-      return ((Math.floor((Math.random() * 100000)) % 61696) + 3840) 
-                  .toString(16).toUpperCase();
-    }
-
     const create = () => {
-      const id = generateID();      
-      router.push(`/host/create?id=${id}`);
+      router.push(`/host/create`);
     } 
 
     return (
