@@ -28,14 +28,14 @@ const createLobby = async (lobby: string) => {
 const insertPlayer = async (lobby: string, name: string) => {
 
   // get players array
-  var { data, err } = await client
+  var data = await client
     .from('lobbies')
     .select('players')
     .eq('lobby', lobby)
 
   // lobby does not exist
-  if (err)
-    return false;
+  
+
 
   // get players array
   const players = data.data[0].players;
