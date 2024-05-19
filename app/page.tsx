@@ -1,6 +1,5 @@
 'use client'
 
-import Game from './game';
 import { useRouter } from 'next/navigation';
 
 const Home = () => {
