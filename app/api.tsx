@@ -71,12 +71,6 @@ const startGame = async (lobby: string) => {
 
   console.log(lobby)
 
-  client.channel(lobby).send({
-    type: 'broadcast',
-    event: 'start',
-    payload: {},
-  });
-
   return true;
 
 }

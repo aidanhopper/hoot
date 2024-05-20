@@ -28,8 +28,14 @@ const Start = () => {
   const startCallback = () => {
     if (players > 0 && lobby !== "") {
       startGame(lobby).then((success) => {
-        if (success)
+        if (success) {
+          client.channel(lobby).send({
+            type: 'broadcast',
+            event: 'start',
+            payload: {},
+          });
           router.push(`/host/session?lobby=${lobby}`);
+        }
       });
     }
   }
