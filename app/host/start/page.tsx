@@ -18,7 +18,7 @@ const Start = () => {
     return urlParams.get('lobby');
   }
 
-  const playerJoinCallback = (payload) => {
+  const playerJoinCallback = () => {
     if (lobby !== "")
       getPlayerCount(lobby).then((count: number) => {
         setPlayers(count);
@@ -58,7 +58,7 @@ const Start = () => {
           table: 'lobbies',
           filter: `lobby=eq.${lob}`
         },
-        (payload) => playerJoinCallback()
+        () => playerJoinCallback()
       )
       .subscribe();
 
