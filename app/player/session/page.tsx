@@ -38,7 +38,6 @@ const Session = () => {
   }
 
   const start = () => {
-    console.log("START");
     setWait(false);
   }
 
@@ -67,8 +66,8 @@ const Session = () => {
     const lobby_ = getLobby();
     const name_ = getName();
 
-    setName(lobby_);
-    setLobby(name_);
+    setName(name_);
+    setLobby(lobby_);
 
     const channel = client.channel(lobby_)
     channel
