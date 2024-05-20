@@ -100,7 +100,7 @@ const Session = () => {
 
         {playerData.map((data) => {
           return (
-            <div className="text-3xl">
+            <div className="text-3xl" key={data.name}>
               {`${data.name} answered ${qlist[questionIndex].answers[data.answer]} `}
               {qlist[questionIndex].answer === data.answer && "WHICH IS CORRECT"}
               {qlist[questionIndex].answer !== data.answer && "WHICH IS INCORRECT DUMMY"}
