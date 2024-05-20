@@ -144,6 +144,7 @@ const gameIsStarted = async (lobby: string) => {
 
 const incrementScore = async (lobby: string, name: string) => {
 
+  /*
   let response = await client
     .from('lobbies')
     .eq('lobby', lobby)
@@ -151,6 +152,7 @@ const incrementScore = async (lobby: string, name: string) => {
 
   if (response.error !== null)
     return false;
+  */
   
 } 
 
