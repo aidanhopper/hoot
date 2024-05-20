@@ -58,7 +58,7 @@ const Start = () => {
           table: 'lobbies',
           filter: `lobby=eq.${lob}`
         },
-        () => playerJoinCallback()
+        (payload) => playerJoinCallback()
       )
       .subscribe();
 
