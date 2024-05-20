@@ -26,7 +26,14 @@ const Session = () => {
   }
 
   const answerRecieved = (payload) => {
-    setPlayerData([... playerData, payload]); 
+
+    const present = playerData.filter((data) => {
+      return data.name === payload.name;
+    }).length === 1;
+
+    if (!present)
+      setPlayerData([... playerData, payload]); 
+
     console.log("playerdata", playerData);
   }
 
@@ -46,8 +53,6 @@ const Session = () => {
         (payload) => answerRecieved(payload.payload),
       )
       .subscribe();
-
-    
 
   }, [playerData]);
   
@@ -72,6 +77,8 @@ const Session = () => {
     setQuestionIndex(questionIndex + 1);
     stopwatch.reset();
 
+    setPlayerData([]);
+    
   }
 
   useEffect(() => {
@@ -79,14 +86,28 @@ const Session = () => {
   }, []);
 
   if (transition) {
+
+    console.log(playerData);
+  
     return (
       <div className="bg-white h-screen text-center content-center font-sans overflow-hidden">
-        <button className="bg-red-500 rounded-xl text-5xl p-5 hover:scale-[101%]
+        <button className="absolute left-10 top-10 bg-red-500 rounded-xl text-xl p-4 hover:scale-[101%]
                            duration-100 hover:saturate-105 active:scale-[101%]
                            shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
           onClick={nextQuestion}>
           Next question
         </button>
+
+        {playerData.map((data) => {
+          return (
+            <div className="text-3xl">
+              {`${data.name} answered ${qlist[questionIndex].answers[data.answer]} `}
+              {qlist[questionIndex].answer === data.answer && "WHICH IS CORRECT"}
+              {qlist[questionIndex].answer !== data.answer && "WHICH IS INCORRECT DUMMY"}
+            </div>
+          );
+        })}
+
       </div>
     );
   }
