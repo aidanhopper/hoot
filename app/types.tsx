@@ -9,4 +9,4 @@ type Session = {
   started: boolean;
 }
 
-export { Player, Session };
+export type { Player, Session };
