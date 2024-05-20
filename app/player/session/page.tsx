@@ -113,12 +113,14 @@ const Session = () => {
       },
     });
 
+    channel.unsubscribe();
+
     return (
       <div className="bg-white h-screen font-sans text-5xl overflow-hidden text-center content-center font-bold">
         {currentQuestion < qlist.length - 2 && "Waiting to go to the next question"}
         {
           currentQuestion >= qlist.length - 2 && 
-          <button className="" onClick={() => router.push("/")}>
+          <button className="bg-green-300" onClick={() => router.push("/")}>
             Go to home page
           </button>
         }

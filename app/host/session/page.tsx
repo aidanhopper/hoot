@@ -106,7 +106,7 @@ const Session = () => {
         }
         { 
           questionIndex >= qlist.length - 2 &&
-          <button className="absolute left-10 top-10 bg-red-500 rounded-xl text-xl p-4 hover:scale-[101%]
+          <button className="absolute left-10 top-10 bg-blue-500 rounded-xl text-xl p-4 hover:scale-[101%]
                              duration-100 hover:saturate-105 active:scale-[101%]
                              shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
             onClick={() => router.push("/")}>
