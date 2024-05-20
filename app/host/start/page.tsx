@@ -62,7 +62,7 @@ const Start = () => {
       )
       .subscribe();
 
-    return () => channel.unsubscribe();
+    // return () => channel.unsubscribe();
     
   }, [players]);
 
