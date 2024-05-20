@@ -37,6 +37,7 @@ const Session = () => {
   }
 
   const start = () => {
+    console.log("START");
     setWait(false);
   }
 
