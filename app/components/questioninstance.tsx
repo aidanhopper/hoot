@@ -1,9 +1,10 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-
 import AnswerButton from './answerbutton';
+import TimerBar from './timerbar';
 import QuestionScreen from './questionscreen';
+  import { useStopwatch } from 'react-timer-hook';
 
 type question = {
   question: string;
@@ -14,7 +15,6 @@ type question = {
 type QuestionInstanceProps = {
   q: question,
   setAnswer: (num: number) => void 
-
 }
 
 const QuestionInstance = ({ q, setAnswer }: QuestionInstanceProps) => {
@@ -23,8 +23,7 @@ const QuestionInstance = ({ q, setAnswer }: QuestionInstanceProps) => {
   const question = "what time is it?";
   const answerArray = ["1", "123", "3", "4"];
 
-  const [seconds, setSeconds] = useState(0);
-  const [docWidth, setDocWidth] = useState(0);
+  const stopwatch = useStopwatch({ autoStart: true });
 
   // the amount of time on the timer in seconds
   const timeSlice = 5;
@@ -32,35 +31,6 @@ const QuestionInstance = ({ q, setAnswer }: QuestionInstanceProps) => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   // sets a interval that increments every 1 milisecond
-  useEffect(() => {
-
-    const interval = setInterval(() => {
-      if (seconds <= timeSlice*1000)
-        setSeconds(seconds + 1);
-    }, 1);
-
-    if (timeSlice*1000 <= seconds)
-      setAnswer(selectedIndex)
-
-    return () => clearInterval(interval);
-
-  }, [seconds]);
-
-  // sets the docwidth at beginning
-  useEffect(() => {
-    setDocWidth(window.innerWidth);
-  }, []);
-
-  // sets the docwidth when resizing
-  useEffect(() => {
-
-    window.addEventListener("resize", () => {
-      setDocWidth(window.innerWidth);
-    });
-
-  }, [docWidth]);
-
-
 
   return (
     <div className="flex h-screen flex-col m-auto">
@@ -73,12 +43,8 @@ const QuestionInstance = ({ q, setAnswer }: QuestionInstanceProps) => {
         selectedIndex={selectedIndex}
         setSelectedIndex={setSelectedIndex}
       />
-      <div className="flex-auto">
-        <div className="absolute bottom-0 bg-blue-500 h-5 duration-1 ease-linear" 
-             style={{width: Math.min(
-               (seconds/1000*docWidth) / (timeSlice), docWidth)
-        }}/>
-      </div>
+      <div className="flex-auto"/>
+      <TimerBar stopwatch={stopwatch} length={10 as number} onEndCallback={() => setAnswer(selectedIndex)}/>
     </div>
   );
 

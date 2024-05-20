@@ -1,60 +1,114 @@
 'use server'
 
 import client from './client'
+import { Player, Session } from './types'
 
-/*
-const lobbyExists = async (lobby: string) => {
+const genLobby =() => {
 
-  var { data, error } = await client
-    .from('lobbies')
-    .eq('lobby')
+  let lob = ((Math.floor((Math.random() * 100000)) % 61696) + 3840) 
+          .toString(16).toUpperCase();
+
+  return lob;
 
 }
 
-const createLobby = async (lobby: string) => {
+const lobbyExists = async (lobby: string) => {
 
-  // try to insert
-  var { data, error } = await client
+  let data = await client
     .from('lobbies')
-    .insert([
-      { lobby: lobby , players: [] },
-    ]);
+    .select('lobby')
+    .eq('lobby', lobby);
 
-  // if error then lobby exists
-  if (error)
+  return false;
+
+}
+
+const createLobby = async () => {
+
+  let lobby = "";
+  let i = 0;
+
+  // can only do this 8 times so nothing crazy happens
+  while(i < 8) {
+
+    lobby = genLobby();
+
+
+    let response = await client
+      .from('lobbies')
+      .insert([
+        { lobby: lobby, players: [], started: false },
+      ])
+      .select();
+
+    if (response.error  === null)
+      break;
+
+    i++;
+
+  }
+
+
+  if (i === 8)
+    return null;
+
+
+  return lobby;
+
+}
+
+const startGame = async (lobby: string) => {
+
+  const response = await client
+    .from('lobbies')
+    .update({ started: true }) 
+    .eq('lobby', lobby);
+
+  if (response.error !== null)
     return false;
 
-  // lobby successfully created
+  client.channel(lobby).send({
+    type: 'broadcast',
+    event: 'start',
+    payload: {},
+  });
+
   return true;
 
 }
-*/
 
 const insertPlayer = async (lobby: string, name: string) => {
 
   // get players array
-  let data = await client
+  let response = await client
     .from('lobbies')
     .select('players')
-    .eq('lobby', lobby)
+    .eq('lobby', lobby);
 
   // lobby does not exist
-  //if (err)
-    //return false;
+  if (!response.data.length)
+    return false;
 
   // get players array
-  const players = data.data[0].players;
+  const players = response.data[0].players;
 
   // check if name is present in array
-  if (players.includes(name))
+  const present = players.filter((player) => {
+    return player.name === name;
+  }).length === 1;
+
+  if (present)
     return false;
 
   // push new name to players array
-  players.push(name);
+  players.push({
+    name: name,
+    score: 0,
+  });
 
   // update players array associated with the lobby 
   // with the new players array
-  data = await client
+  response = await client
     .from('lobbies')
     .update({ players: players })
     .eq('lobby', lobby);
@@ -63,4 +117,44 @@ const insertPlayer = async (lobby: string, name: string) => {
   
 };
 
-export { insertPlayer };
+const getPlayerCount = async (lobby: string) => {
+
+  const response = await client
+    .from('lobbies')
+    .select('players')
+    .eq('lobby', lobby);
+ 
+  return response.data[0].players.length;
+
+}
+
+const gameIsStarted = async (lobby: string) => {
+
+  const response = await client
+    .from('lobbies')
+    .select('started')
+    .eq('lobby', lobby);
+  
+  if (response.error !== null)
+    return false;
+
+  return response.data[0].started;
+
+}
+
+const incrementScore = async (lobby: string, name: string) => {
+
+  let response = await client
+    .from('lobbies')
+    .eq('lobby', lobby)
+    .select('players');
+
+  if (response.error !== null)
+    return false;
+  
+} 
+
+export {
+  insertPlayer, createLobby, lobbyExists, genLobby, getPlayerCount,
+  startGame, gameIsStarted, incrementScore,
+};

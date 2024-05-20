@@ -1,6 +1,6 @@
-
 'use client'
 
+import { gameIsStarted } from '../../api';
 import { useState, useEffect, useRef } from 'react';
 import client from '../../client';
 import QuestionInstance from '../../components/questioninstance';
@@ -15,92 +15,122 @@ type question = {
 const Session = () => {
 
   const [ name, setName ] = useState<string | undefined>(undefined);
-  const [ id, setId ] = useState<string | undefined>(undefined);
-  const [ channel, setChannel ] = useState<any>(undefined);
+  const [ lobby, setLobby ] = useState<string | undefined>(undefined);
   const [ wait, setWait ] = useState(true);
   const [ answer, setAnswer ] = useState<number | undefined>(undefined);
   const [ currentQuestion, setCurrentQuestion ] = useState<number>(0);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [seconds, setSeconds] = useState(0);
+  const [ selectedIndex, setSelectedIndex ] = useState(-1);
+  const [ seconds, setSeconds ] = useState(0);
 
   const qlist: question[] = deck['deck'];
 
-  // the amount of time on the timer in seconds
-  const timeSlice = 5;
-
-  // sets a interval that increments every 1 milisecond
-  useEffect(() => {
-
-    const interval = setInterval(() => {
-      if (seconds <= timeSlice*1000)
-        setSeconds(seconds + 1);
-    }, 1);
-
-    if (timeSlice*1000 <= seconds)
-      setAnswer(selectedIndex)
-
-    return () => clearInterval(interval);
-
-  }, [seconds]);
-
-  // subscribe to the wait event and get url parameters
-  useEffect(() => {
-
+  const getName = () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    
-    setName(urlParams.get('name'));
-    setId(urlParams.get('id'));
+    return urlParams.get('name');
+  }
 
-    const ch = client.channel(urlParams.get('id'))
+  const getLobby = () => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    return urlParams.get('lobby');
+  }
 
-    ch.on(
-      'broadcast',
-      { event: 'start' },
-      (payload) => {
-        console.log('RECIEVED PAYLOAD');
-        setWait(false);
-      },
-    ).subscribe();
-    
-    setChannel(ch);
+  const start = () => {
+    setWait(false);
+  }
 
+  const nextQuestion = (payload) => {
+    setAnswer(undefined);
+    setCurrentQuestion(payload.index);
+  }
+
+  const checkIfStarted = () => {
+    const lobby_ = getLobby();
+    gameIsStarted(lobby_)
+      .then((started) => {
+        if (started)
+          start();
+      })
+  }
+
+  useEffect(() => {
+    checkIfStarted();
   }, []);
+
+  // query the database on startup and subscribe to changes
+  // also set name and lobby
+  useEffect(() => {
+
+    const lobby_ = getLobby();
+    const name_ = getName();
+    
+    setName(lobby_);
+    setLobby(name_);
+    
+    const channel = client.channel(lobby_)
+    channel
+      .on(
+        'broadcast',
+        { event: 'start' },
+        () => start(),
+      )
+      .on(
+        'broadcast',
+        { event: 'nextQuestion' },
+        (payload) => nextQuestion(payload.payload),
+      )
+      .subscribe();
+
+    return () => channel.unsubscribe();
+
+  }, [currentQuestion]);
+
 
   // wait for host to start the game
   if (wait) {
+
     return (
       <div className="bg-white h-screen font-bold text-center text-5xl content-center font-sans overflow-hidden">
         Waiting for host to start the game
       </div>
     );
+
   }
 
   // time is up for this question
-  if (answer !== undefined) {
+  else if (answer !== undefined) {
+
+    const channel = client.channel(lobby);
 
     channel.send({
       type: 'broadcast',
-      event: 'answer given',
-      payload: { 
-        'name': name,
-        'answer': answer
+      event: 'answer',
+      payload: {
+        answer: answer, 
+        name: name,
       },
     });
 
+    channel.unsubscribe();
+
     return (
-      <div className="bg-white h-screen font-sans overflow-hidden text-center content-center font-bold">
+      <div className="bg-white h-screen font-sans text-5xl overflow-hidden text-center content-center font-bold">
         Waiting to go to the next question
       </div>
     );
 
   }
 
-  return (
-    <div className="bg-white h-screen font-sans overflow-hidden">
-      <QuestionInstance q={qlist[currentQuestion]} setAnswer={setAnswer}/>
-    </div>
-  );
+  else {
+
+    return (
+      <div className="bg-white h-screen font-sans overflow-hidden">
+        { currentQuestion != -1 && <QuestionInstance q={qlist[currentQuestion]} setAnswer={setAnswer}/>}
+      </div>
+    );
+
+  }
 
 }
 

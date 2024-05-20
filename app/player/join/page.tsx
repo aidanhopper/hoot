@@ -17,20 +17,20 @@ const Join = () => {
     });
   }
 
-  const validateInput = (name: string, id: string) => {
+  const validateInput = (name: string, lobby: string) => {
     
     // make sure input is good
-    if (name === "" || id === "") {
+    if (name === "" || lobby === "") {
       inputErr();
       return;
     }
   
-    if (id.length !== 4) {
+    if (lobby.length !== 4) {
       inputErr();
       return;
     }
 
-    insertPlayer(id, name).then((success) => {
+    insertPlayer(lobby, name).then((success) => {
 
       if (!success) {
         inputErr();
@@ -38,8 +38,8 @@ const Join = () => {
       }
 
       const uriName = encodeURIComponent(name);
-      const uriId = encodeURIComponent(id);
-      const uri = `/player/session?name=${uriName}&id=${uriId}`
+      const uriLobby = encodeURIComponent(lobby);
+      const uri = `/player/session?name=${uriName}&lobby=${uriLobby}`
 
       router.push(uri);
 
@@ -57,7 +57,8 @@ const Join = () => {
           <span className="flex-auto text-xl text-right">
             Name
           </span>
-          <input id="playerName" className="flex-auto h-8 border-b-4 ml-5" style={inputStyle} placeholder="Ben Dover"/>
+          <input id="playerName" className="flex-auto h-8 border-b-4 ml-5"
+            style={inputStyle} placeholder="Ben Dover"/>
         </div>
         <div className="pt-5">
           <span className="flex-auto text-xl content-begin text-right">

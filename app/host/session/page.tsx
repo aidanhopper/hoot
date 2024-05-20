@@ -1,8 +1,10 @@
 'use client'
 
 import deck from '../../deck.json';
+import client from '../../client';
 import { useState, useEffect } from 'react';
-
+import { useStopwatch } from 'react-timer-hook';
+import TimerBar from '../../components/timerbar';
 
 type question = {
   question: string;
@@ -12,53 +14,89 @@ type question = {
 
 const Session = () => {
 
-  const [ seconds, setSeconds ] = useState(0);
-  const [ docWidth, setDocWidth ] = useState(0);
-  const [ wait, setWait ] = useState(false);
+  const [ transition, setTransition ] = useState(false);
+  const [ questionIndex, setQuestionIndex ] = useState(-1);
+  const [ playerData, setPlayerData ] = useState([]);
+  const [ lobby, setLobby ] = useState("");
 
-  const timeSlice = 5;
-  const qlist: question[] = deck['deck'];
-  const playerData = [];
+  const getLobby = () => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    return urlParams.get('lobby');
+  }
 
-  // set doc width when window loads
+  const answerRecieved = (payload) => {
+    setPlayerData([... playerData, payload]); 
+    console.log("playerdata", playerData);
+  }
+
+
   useEffect(() => {
-    setDocWidth(window.innerWidth);
-  }, []);
 
-  useEffect(() => {
+    const lobby_ = getLobby();
+
+    setLobby(lobby_);
+
+    const channel = client.channel(lobby_);
     
+    channel
+      .on(
+        'broadcast',
+        { event: 'answer' },
+        (payload) => answerRecieved(payload.payload),
+      )
+      .subscribe();
+
+    return () => channel.unsubscribe();
+    
+
+  }, [playerData]);
+  
+  const qlist: question[] = deck['deck'];
+  const stopwatch = useStopwatch({autoStart: true});
+
+  const nextQuestion = () => {
+
+    const channel = client.channel(lobby);
+
+    channel.send({
+      type: 'broadcast',
+      event: 'nextQuestion',
+      payload: {
+        index: questionIndex + 1,
+      },
+    });
+
+    channel.unsubscribe();
+
+    setTransition(false);
+    setQuestionIndex(questionIndex + 1);
+    stopwatch.reset();
+
+  }
+
+  useEffect(() => {
+    nextQuestion();
   }, []);
 
-  // 
-  useEffect(() => {
-
-    const interval = setInterval(() => {
-      if (seconds <= timeSlice*1000)
-        setSeconds(seconds + 1);
-    }, 1);
-
-    if (timeSlice*1000 <= seconds)
-      setWait(true);
-
-    return () => clearInterval(interval);
-
-  }, [seconds]);
-
-  // 
-  if (wait) {
+  if (transition) {
     return (
-    <div className="bg-white h-screen font-sans overflow-hidden">
-      asdf
-    </div>
+      <div className="bg-white h-screen text-center content-center font-sans overflow-hidden">
+        <button className="bg-red-500 rounded-xl text-5xl p-5 hover:scale-[101%]
+                           duration-100 hover:saturate-105 active:scale-[101%]
+                           shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
+          onClick={nextQuestion}>
+          Next question
+        </button>
+      </div>
     );
   }
 
   return (
     <div className="bg-white font-bold text-center content-center text-5xl h-screen font-sans overflow-hidden">
-      {qlist[0]['question'] as unknown as JSX.Element}
+      {questionIndex !== -1 && qlist[questionIndex].question as unknown as JSX.Element}
       <div className="flex-auto">
-        <div className="absolute bottom-0 bg-blue-500 h-5 duration-1 ease-linear" 
-             style={{width: Math.min((seconds/1000*docWidth) / (timeSlice), docWidth)}}/>
+        <TimerBar stopwatch={stopwatch} length={10 as number} onEndCallback={() => setTransition(true)}/>
       </div>
     </div>
   );
