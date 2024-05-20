@@ -47,7 +47,7 @@ const Session = () => {
       )
       .subscribe();
 
-    return () => channel.unsubscribe();
+    return async () => channel.unsubscribe();
     
 
   }, [playerData]);
