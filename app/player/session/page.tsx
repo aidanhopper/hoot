@@ -82,7 +82,6 @@ const Session = () => {
       )
       .subscribe();
 
-    return async () => channel.unsubscribe();
 
   }, [currentQuestion]);
 
