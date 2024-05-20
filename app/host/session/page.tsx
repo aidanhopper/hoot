@@ -77,6 +77,8 @@ const Session = () => {
     setQuestionIndex(questionIndex + 1);
     stopwatch.reset();
 
+
+
     setPlayerData([]);
     
   }

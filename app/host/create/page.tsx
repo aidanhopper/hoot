@@ -1,9 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { createLobby, genLobby } from '../../api';
-import client from '../../client'
+import { createLobby } from '../../api';
 
 const Create = () => {
 

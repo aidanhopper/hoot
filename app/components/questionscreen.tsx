@@ -2,8 +2,6 @@
 
 import AnswerButton from './answerbutton';
 
-import React, { useState } from 'react'
-
 type QuestionScreenProps = {
   question: string,
   answers: string[],
@@ -13,7 +11,6 @@ type QuestionScreenProps = {
 }
 
 const QuestionScreen = (props: QuestionScreenProps) => {
-
 
   // need to extract this after some time
   return (
@@ -29,15 +26,15 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               borderColor="border-green-500"
               id={0 as number}
               selected={props.selectedIndex}
-              callback={ () => props.setSelectedIndex(0) }>
+              callback={() => props.setSelectedIndex(0)}>
               {props.answers[0] as unknown as JSX.Element}
             </AnswerButton>
-            <AnswerButton 
+            <AnswerButton
               color="bg-blue-300"
               borderColor="border-blue-500"
               id={1 as number}
               selected={props.selectedIndex}
-              callback={ () => props.setSelectedIndex(1) }>
+              callback={() => props.setSelectedIndex(1)}>
               {props.answers[1] as unknown as JSX.Element}
             </AnswerButton>
           </div>
@@ -47,7 +44,7 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               borderColor="border-yellow-500"
               id={2 as number}
               selected={props.selectedIndex}
-              callback={ () => props.setSelectedIndex(2) }>
+              callback={() => props.setSelectedIndex(2)}>
               {props.answers[2] as unknown as JSX.Element}
             </AnswerButton>
             <AnswerButton
@@ -55,7 +52,7 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               borderColor="border-purple-500"
               id={3 as number}
               selected={props.selectedIndex}
-              callback={ () => props.setSelectedIndex(3) }>
+              callback={() => props.setSelectedIndex(3)}>
               {props.answers[3] as unknown as JSX.Element}
             </AnswerButton>
           </div>

@@ -3,28 +3,27 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { insertPlayer } from '../../api';
-import client from '../../client'
 
 const Join = () => {
 
   const router = useRouter();
 
-  const [ inputStyle, setInputStyle ] = useState({});
+  const [inputStyle, setInputStyle] = useState({});
 
   const inputErr = () => {
-    setInputStyle ({
+    setInputStyle({
       'borderColor': 'red',
     });
   }
 
   const validateInput = (name: string, lobby: string) => {
-    
+
     // make sure input is good
     if (name === "" || lobby === "") {
       inputErr();
       return;
     }
-  
+
     if (lobby.length !== 4) {
       inputErr();
       return;
@@ -58,13 +57,13 @@ const Join = () => {
             Name
           </span>
           <input id="playerName" className="flex-auto h-8 border-b-4 ml-5"
-            style={inputStyle} placeholder="Ben Dover"/>
+            style={inputStyle} placeholder="Ben Dover" />
         </div>
         <div className="pt-5">
           <span className="flex-auto text-xl content-begin text-right">
             ID &nbsp; &nbsp; &nbsp; &nbsp;
           </span>
-          <input id="playerID" className="flex-none border-b-4 ml-5" style={inputStyle} placeholder="1234"/>
+          <input id="playerID" className="flex-none border-b-4 ml-5" style={inputStyle} placeholder="1234" />
         </div>
         <div className="pt-5">
           <button className="bg-red-500 p-2 rounded-xl shadow-[5px_5px_2px_rgb(0,0,0,0.25)] 

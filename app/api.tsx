@@ -3,10 +3,10 @@
 import client from './client'
 import { Player, Session } from './types'
 
-const genLobby =() => {
+const genLobby = () => {
 
-  let lob = ((Math.floor((Math.random() * 100000)) % 61696) + 3840) 
-          .toString(16).toUpperCase();
+  let lob = ((Math.floor((Math.random() * 100000)) % 61696) + 3840)
+    .toString(16).toUpperCase();
 
   return lob;
 
@@ -29,7 +29,7 @@ const createLobby = async () => {
   let i = 0;
 
   // can only do this 8 times so nothing crazy happens
-  while(i < 8) {
+  while (i < 8) {
 
     lobby = genLobby();
 
@@ -41,17 +41,15 @@ const createLobby = async () => {
       ])
       .select();
 
-    if (response.error  === null)
+    if (response.error === null)
       break;
 
     i++;
 
   }
 
-
   if (i === 8)
     return null;
-
 
   return lobby;
 
@@ -61,7 +59,7 @@ const startGame = async (lobby: string) => {
 
   const response = await client
     .from('lobbies')
-    .update({ started: true }) 
+    .update({ started: true })
     .eq('lobby', lobby);
 
   console.log(response);
@@ -88,7 +86,7 @@ const insertPlayer = async (lobby: string, name: string) => {
     return false;
 
   // get players array
-  const players = response.data[0].players;
+  const players: Player[] = response.data[0].players;
 
   // check if name is present in array
   const present = players.filter((player) => {
@@ -112,7 +110,7 @@ const insertPlayer = async (lobby: string, name: string) => {
     .eq('lobby', lobby);
 
   return true;
-  
+
 };
 
 const getPlayerCount = async (lobby: string) => {
@@ -121,7 +119,7 @@ const getPlayerCount = async (lobby: string) => {
     .from('lobbies')
     .select('players')
     .eq('lobby', lobby);
- 
+
   return response.data[0].players.length;
 
 }
@@ -132,7 +130,7 @@ const gameIsStarted = async (lobby: string) => {
     .from('lobbies')
     .select('started')
     .eq('lobby', lobby);
-  
+
   if (response.error !== null)
     return false;
 
@@ -140,21 +138,20 @@ const gameIsStarted = async (lobby: string) => {
 
 }
 
-const incrementScore = async (lobby: string, name: string) => {
+const incrementScore = async (lobby: string, scores: any[]) => {
 
-  /*
   let response = await client
     .from('lobbies')
-    .eq('lobby', lobby)
-    .select('players');
+    .select('players')
+    .eq('lobby', lobby);
 
   if (response.error !== null)
     return false;
-  */
-  
-} 
+
+  let players = response.data[0].players;
+}
 
 export {
-  insertPlayer, createLobby, lobbyExists, genLobby, getPlayerCount,
+  insertPlayer, createLobby, lobbyExists, getPlayerCount,
   startGame, gameIsStarted, incrementScore,
 };

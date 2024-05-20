@@ -9,8 +9,8 @@ const Start = () => {
 
   const router = useRouter();
 
-  const [ lobby, setLobby ] = useState<string>("");
-  const [ players, setPlayers ] = useState<number>(-1);
+  const [lobby, setLobby] = useState<string>("");
+  const [players, setPlayers] = useState<number>(-1);
 
   const getLobby = () => {
     const queryString = window.location.search;
@@ -56,9 +56,10 @@ const Start = () => {
     const lob = getLobby();
 
     const channel = client.channel('lobbies')
+    channel
       .on(
         'postgres_changes',
-        { 
+        {
           event: 'UPDATE',
           schema: 'public',
           table: 'lobbies',
@@ -69,7 +70,7 @@ const Start = () => {
       .subscribe();
 
     // return () => channel.unsubscribe();
-    
+
   }, [players]);
 
   return (
@@ -80,7 +81,7 @@ const Start = () => {
       <button className="bg-red-500 text-4xl rounded-xl p-5 m-10 
         shadow-[5px_5px_2px_rgb(0,0,0,0.25)] hover:scale-[105%] hover:saturate-115 duration-100"
         onClick={startCallback}>
-          Start
+        Start
       </button>
       <div className="absolute bottom-0 left-0 text-5xl p-10">
         Players: {players > -1 && players as unknown as JSX.Element}
