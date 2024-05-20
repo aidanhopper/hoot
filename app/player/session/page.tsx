@@ -1,10 +1,11 @@
 'use client'
 
 import { gameIsStarted } from '../../api';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import client from '../../client';
 import QuestionInstance from '../../components/questioninstance';
 import deck from '../../deck.json'
+import { useRouter } from 'next/navigation';
 
 type question = {
   question: string;
@@ -14,13 +15,13 @@ type question = {
 
 const Session = () => {
 
+  const router = useRouter();
+
   const [name, setName] = useState<string | undefined>(undefined);
   const [lobby, setLobby] = useState<string | undefined>(undefined);
   const [wait, setWait] = useState(true);
   const [answer, setAnswer] = useState<number | undefined>(undefined);
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [seconds, setSeconds] = useState(0);
 
   const qlist: question[] = deck['deck'];
 
@@ -112,11 +113,15 @@ const Session = () => {
       },
     });
 
-    channel.unsubscribe();
-
     return (
       <div className="bg-white h-screen font-sans text-5xl overflow-hidden text-center content-center font-bold">
-        Waiting to go to the next question
+        {currentQuestion < qlist.length - 2 && "Waiting to go to the next question"}
+        {
+          currentQuestion >= qlist.length - 2 && 
+          <button className="" onClick={() => router.push("/")}>
+            Go to home page
+          </button>
+        }
       </div>
     );
 

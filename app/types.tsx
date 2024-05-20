@@ -9,4 +9,15 @@ type Session = {
   started: boolean;
 }
 
-export type { Player, Session };
+type Question = {
+  question: string,
+  answer: number,
+  questions: string[],
+}
+
+type Deck = {
+  name: string,
+  questions: Question[],
+}
+
+export type { Player, Session, Deck, Question };
