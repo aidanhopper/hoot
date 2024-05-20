@@ -5,6 +5,7 @@ import client from '../../client';
 import { useState, useEffect } from 'react';
 import { useStopwatch } from 'react-timer-hook';
 import TimerBar from '../../components/timerbar';
+import { Player } from '../../types';
 
 type question = {
   question: string;
@@ -14,10 +15,10 @@ type question = {
 
 const Session = () => {
 
-  const [ transition, setTransition ] = useState(false);
-  const [ questionIndex, setQuestionIndex ] = useState(-1);
-  const [ playerData, setPlayerData ] = useState([]);
-  const [ lobby, setLobby ] = useState("");
+  const [transition, setTransition] = useState(false);
+  const [questionIndex, setQuestionIndex] = useState(-1);
+  const [playerData, setPlayerData] = useState([]);
+  const [lobby, setLobby] = useState("");
 
   const getLobby = () => {
     const queryString = window.location.search;
@@ -25,14 +26,14 @@ const Session = () => {
     return urlParams.get('lobby');
   }
 
-  const answerRecieved = (payload) => {
+  const answerRecieved = (payload: Player) => {
 
     const present = playerData.filter((data) => {
       return data.name === payload.name;
     }).length === 1;
 
     if (!present)
-      setPlayerData([... playerData, payload]); 
+      setPlayerData([...playerData, payload]);
 
     console.log("playerdata", playerData);
   }
@@ -45,7 +46,7 @@ const Session = () => {
     setLobby(lobby_);
 
     const channel = client.channel(lobby_);
-    
+
     channel
       .on(
         'broadcast',
@@ -55,9 +56,9 @@ const Session = () => {
       .subscribe();
 
   }, [playerData]);
-  
+
   const qlist: question[] = deck['deck'];
-  const stopwatch = useStopwatch({autoStart: true});
+  const stopwatch = useStopwatch({ autoStart: true });
 
   const nextQuestion = () => {
 
@@ -80,7 +81,7 @@ const Session = () => {
 
 
     setPlayerData([]);
-    
+
   }
 
   useEffect(() => {
@@ -118,7 +119,7 @@ const Session = () => {
     <div className="bg-white font-bold text-center content-center text-5xl h-screen font-sans overflow-hidden">
       {questionIndex !== -1 && qlist[questionIndex].question as unknown as JSX.Element}
       <div className="flex-auto">
-        <TimerBar stopwatch={stopwatch} length={10 as number} onEndCallback={() => setTransition(true)}/>
+        <TimerBar stopwatch={stopwatch} length={10 as number} onEndCallback={() => setTransition(true)} />
       </div>
     </div>
   );

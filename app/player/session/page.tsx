@@ -14,13 +14,13 @@ type question = {
 
 const Session = () => {
 
-  const [ name, setName ] = useState<string | undefined>(undefined);
-  const [ lobby, setLobby ] = useState<string | undefined>(undefined);
-  const [ wait, setWait ] = useState(true);
-  const [ answer, setAnswer ] = useState<number | undefined>(undefined);
-  const [ currentQuestion, setCurrentQuestion ] = useState<number>(0);
-  const [ selectedIndex, setSelectedIndex ] = useState(-1);
-  const [ seconds, setSeconds ] = useState(0);
+  const [name, setName] = useState<string | undefined>(undefined);
+  const [lobby, setLobby] = useState<string | undefined>(undefined);
+  const [wait, setWait] = useState(true);
+  const [answer, setAnswer] = useState<number | undefined>(undefined);
+  const [currentQuestion, setCurrentQuestion] = useState<number>(0);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [seconds, setSeconds] = useState(0);
 
   const qlist: question[] = deck['deck'];
 
@@ -41,7 +41,7 @@ const Session = () => {
     setWait(false);
   }
 
-  const nextQuestion = (payload) => {
+  const nextQuestion = (payload: { index: number }) => {
     setAnswer(undefined);
     setCurrentQuestion(payload.index);
   }
@@ -65,10 +65,10 @@ const Session = () => {
 
     const lobby_ = getLobby();
     const name_ = getName();
-    
+
     setName(lobby_);
     setLobby(name_);
-    
+
     const channel = client.channel(lobby_)
     channel
       .on(
@@ -107,7 +107,7 @@ const Session = () => {
       type: 'broadcast',
       event: 'answer',
       payload: {
-        answer: answer, 
+        answer: answer,
         name: name,
       },
     });
@@ -126,7 +126,7 @@ const Session = () => {
 
     return (
       <div className="bg-white h-screen font-sans overflow-hidden">
-        { currentQuestion != -1 && <QuestionInstance q={qlist[currentQuestion]} setAnswer={setAnswer}/>}
+        {currentQuestion != -1 && <QuestionInstance q={qlist[currentQuestion]} setAnswer={setAnswer} />}
       </div>
     );
 
