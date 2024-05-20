@@ -87,8 +87,8 @@ const Session = () => {
 
   if (transition) {
 
-    console.log(playerData);
-  
+
+
     return (
       <div className="bg-white h-screen text-center content-center font-sans overflow-hidden">
         <button className="absolute left-10 top-10 bg-red-500 rounded-xl text-xl p-4 hover:scale-[101%]

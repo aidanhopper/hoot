@@ -64,8 +64,12 @@ const startGame = async (lobby: string) => {
     .update({ started: true }) 
     .eq('lobby', lobby);
 
+  console.log(response);
+
   if (response.error !== null)
     return false;
+
+  console.log(lobby)
 
   client.channel(lobby).send({
     type: 'broadcast',
