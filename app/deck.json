@@ -8,7 +8,7 @@
     {
       "question": "What was radiohead original called",
       "answers": ["on a friday", "fat sloppy knob", "last tuesday afternoon", "goober gophers"],
-      "answer": 1
+      "answer": 0
     },
     {
       "question": "What is the worst case time complexity of quicksort?",

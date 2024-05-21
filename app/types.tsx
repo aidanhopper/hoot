@@ -3,7 +3,7 @@ type Player = {
   score: number;
 }
 
-type Session = {
+type Lobby = {
   lobby: string;
   players: Player[];
   started: boolean;
@@ -12,7 +12,7 @@ type Session = {
 type Question = {
   question: string,
   answer: number,
-  questions: string[],
+  answers: string[],
 }
 
 type Deck = {
@@ -20,4 +20,4 @@ type Deck = {
   questions: Question[],
 }
 
-export type { Player, Session, Deck, Question };
+export type { Player, Lobby, Deck, Question };

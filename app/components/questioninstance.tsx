@@ -4,16 +4,11 @@ import React, { useEffect, useState } from 'react';
 import AnswerButton from './answerbutton';
 import TimerBar from './timerbar';
 import QuestionScreen from './questionscreen';
-  import { useStopwatch } from 'react-timer-hook';
-
-type question = {
-  question: string;
-  answers: string[];
-  answer: number;
-}
+import { useStopwatch } from 'react-timer-hook';
+import { Question } from '../types';
 
 type QuestionInstanceProps = {
-  q: question,
+  q: Question,
   setAnswer: (num: number) => void 
 }
 
@@ -37,9 +32,9 @@ const QuestionInstance = ({ q, setAnswer }: QuestionInstanceProps) => {
       <div className="flex-auto"/>
       <div className="flex-auto"/>
       <QuestionScreen
-        question={q['question']}
+        question={q.question}
         className="flex-auto"
-        answers={q['answers']}
+        answers={q.answers}
         selectedIndex={selectedIndex}
         setSelectedIndex={setSelectedIndex}
       />

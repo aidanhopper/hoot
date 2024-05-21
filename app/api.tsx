@@ -1,7 +1,7 @@
 'use server'
 
 import client from './client'
-import { Player, Session } from './types'
+import { Player } from './types'
 
 const genLobby = () => {
 
