@@ -38,66 +38,28 @@ const CreateDeck = () => {
     );
   }
 
-  const Card = ({ q }: { q: Question }) => {
-    return (
-      <button className="bg-gray-100 rounded-xl w-[300px] h-[200px] 
-        shadow-[5px_5px_2px_rgb(0,0,0,0.25)] p-1  text-center content-center
-        hover:scale-[101%] duration-100 text-xl mr-8">
-        {q.question}
-      </button>
-    );
-  }
 
-  const QuestionSlide = ({ q }: QuestionSlideProps) => {
-    return (
-      <div className="flex h-full flex-col">
-        <div className="flex-auto" />
-        <div className="flex-auto content-center m-auto ">
-          <Textbox id="textbox1" className="text-3xl min-w-[100px] border-b-2 
-            rounded-none border-black">
-            {q.question as unknown as JSX.Element}
-          </Textbox>
-        </div>
-        <div className="flex-auto flex flex-col w-[50%] m-auto text-2xl">
-          <div className="flex flex-auto text-center ">
-            <Textbox className="bg-blue-300 w-1/2 rounded-full" id="textbox1">
-              {q.answers[0] as unknown as JSX.Element}
-            </Textbox>
-            <Textbox className="bg-purple-300 w-1/2 rounded-full" id="textbox1">
-              {q.answers[1] as unknown as JSX.Element}
-            </Textbox>
-          </div>
-          <div className="flex flex-auto text-center">
-            <Textbox className="bg-green-300 w-1/2 rounded-full" id="textbox1">
-              {q.answers[2] as unknown as JSX.Element}
-            </Textbox>
-            <Textbox className="bg-red-300 w-1/2 rounded-full" id="textbox1">
-              {q.answers[3] as unknown as JSX.Element}
-            </Textbox>
-          </div>
-        </div>
-        <div className="flex-auto" />
-        <div className="flex-auto" />
-      </div>
-    );
-  }
 
   return (
-    <div className="bg-white h-screen content-center font-sans overflow-hidden">
-      <div className="flex flex-col">
-        <div className="flex flex-auto flex-col">
-          <div className="flex-none">
+    <div className="bg-gray-100 h-screen font-sans overflow-hidden">
+      <div className="flex flex-col h-full">
+        <div className="flex-none content-center bg-white h-[40px]">
+          Navbar
+        </div>
+        <div className="flex-auto container m-auto pt-[50px] px-[200px]">
+          <div className="flex">
+            <span className="flex-auto font-bold text-xl">
+              Create a new deck
+            </span>
+            <span className="flex-auto text-right">
+              <button className="border-gray-400 hover:bg-gray-200 text-blue-800
+                border-2 duration-200 py-1 px-8 rounded-lg">
+                Create
+              </button>
+            </span>
           </div>
-          <div className="flex-auto flex flex-col h-screen container m-auto">
-            <div className="flex-auto bg-white h-[40%] shadow-[5px_5px_2px_rgb(0,0,0,0.25)]
-              mt-16 ml-16 mr-16 border-gray-100 border-2">
-              {cards.length > 0 && <QuestionSlide q={cards[0]} />}
-            </div>
-            <div className="content-center flex-auto items-center border border-black">
-              <AddButton className="-auto w-[100px] flex-none" />
-              <Card q={cards[0]}/>
-              <Card q={cards[0]}/>
-            </div>
+          <div className="flex-auto">
+            asdf
           </div>
         </div>
       </div>
