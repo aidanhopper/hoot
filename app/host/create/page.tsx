@@ -17,7 +17,7 @@ const Create = () => {
 
   /* sets the states and subscribes to the player join channel */
 
- return (
+  return (
     <div className="bg-white h-screen font-sans overflow-hidden">
       <div className="text-center m-auto h-screen content-center">
         <button className="bg-red-500 text-3xl rounded-xl p-5 m-10 
