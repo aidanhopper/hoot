@@ -2,119 +2,27 @@
 
 import Deck from '../../deck.json';
 import { Question } from '../../types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Card from '../../components/deckcreatecard';
 
 
 type QuestionSlideProps = {
   q: Question;
 }
 
-type TextboxProps = {
-  children?: JSX.Element;
-  className?: string;
-  id: string;
-}
+
 
 const CreateDeck = () => {
 
-  const cards: Question[] = [];
-  cards.push(Deck.deck[0]);
+  const [cards, setCards] = useState<Question[]>([]);
 
-
-  const Textbox = (props: TextboxProps) => {
-    const classes = `content-center overflow-hidden min-w-screen 
-                     font-bold outline-none border-b-2 
-                     border-gray-200 focus:border-yellow-300 max-w-full`;
-    return (
-      <div className={`${props.className}`}>
-        <div className={classes} role="textbox" id={props.id}
-          contentEditable="true" suppressContentEditableWarning={true}>
-          {props.children}
-        </div>
-      </div>
-    );
-  }
-
-  const AddButton = ({ className }: { className?: string }) => {
-    return (
-      <button className={`text-5xl border-black w-[35px] text-center
-        hover:scale-[110%] duration-200 hover:text-blue-600 ${className}`}>
-        +
-      </button>
-    );
-  }
-
-  const CardTextBox = ({ children }: { children?: string }) => {
-    return (
-      <>
-        <div className="flex w-full">
-          <div className="flex-none font-bold content-center ml-3 text-gray-400">
-            {children}
-          </div>
-          <Textbox className="w-full p-2" id="question" />
-          <div className="flex-auto">
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  const AnswerButton = ({ children, className }: { children: string, className?:string }) => {
+  const AddButton = ({ className, onClick }: { className?: string, onClick: () => void }) => {
     return (
       <div className={className}>
-        <button className="border-gray-300 px-3 py-1 border-2 text-sm text-gray-400 
-          hover:bg-gray-100 duration-100 rounded-lg">
-          {children}
+        <button className="border-b-4 py-1 border-green-400 hover:border-yellow-400
+          hover:text-yellow-400 duration-100 font-mono" onClick={onClick}>
+          + ADD CARD
         </button>
-      </div>
-    );
-  }
-
-  const Card = ({ className }: { className?: string }) => {
-
-    return (
-      <div className={`${className} mb-6`}>
-        <div className="w-full bg-white rounded-lg">
-          <div className="flex border-b-2 text-gray-400 p-4 font-bold text-lg ">
-            <span className="flex-auto">
-              1
-            </span>
-            <AnswerButton className="flex-auto text-center">
-              A1
-            </AnswerButton>
-            <AnswerButton className="flex-auto text-center">
-              A2
-            </AnswerButton>
-            <AnswerButton className="flex-auto text-center">
-              A3
-            </AnswerButton>
-            <AnswerButton className="flex-auto text-center">
-              A4
-            </AnswerButton>
-            <div className="flex-auto text-right">
-              <button className="hover:text-red-500 duration-100">
-                X
-              </button>
-            </div>
-          </div>
-          <CardTextBox>
-            Q&nbsp;
-          </CardTextBox>
-          <CardTextBox>
-            A1
-          </CardTextBox>
-          <CardTextBox>
-            A2
-          </CardTextBox>
-          <CardTextBox>
-            A3
-          </CardTextBox>
-          <CardTextBox>
-            A4
-          </CardTextBox>
-          <div className="flex">
-          </div>
-        </div>
       </div>
     );
   }
@@ -168,11 +76,18 @@ const CreateDeck = () => {
               Import
             </button>
             <div className="flex-auto">
-              <Card />
-              <Card />
-              <Card />
-              <Card />
-              <Card />
+              {cards.map((data, index) => {
+                return <Card key={index} index={index+1} question={data} />
+              })}
+              <AddButton onClick={() => {
+                setCards(
+                  [...cards, {
+                    question: "",
+                    answers: [],
+                    answer: -1,
+                  }]
+                )
+              }} className="text-center w-full mb-12" />
             </div>
           </div>
         </div>
