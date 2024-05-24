@@ -1,5 +1,8 @@
+'use client'
+
 import Deck from '../../deck.json';
 import { Question } from '../../types';
+import { useEffect } from 'react';
 
 
 type QuestionSlideProps = {
@@ -17,14 +20,17 @@ const CreateDeck = () => {
   const cards: Question[] = [];
   cards.push(Deck.deck[0]);
 
+
   const Textbox = (props: TextboxProps) => {
-    const classes = `flex-auto m-2 rounded-lg content-center 
-                     text-ellipsis outline-none overflow-hidden 
-                     ${props.className}`;
+    const classes = `content-center overflow-hidden min-w-screen 
+                     font-bold outline-none border-b-2 
+                     border-gray-200 focus:border-yellow-200 max-w-full`;
     return (
-      <div className={classes} id={props.id}
-        role="textbox" contentEditable="true" suppressContentEditableWarning={true}>
-        {props.children}
+      <div className={`${props.className}`}>
+        <div className={classes} role="textbox" id={props.id}
+          contentEditable="true" suppressContentEditableWarning={true}>
+          {props.children}
+        </div>
       </div>
     );
   }
@@ -38,54 +44,58 @@ const CreateDeck = () => {
     );
   }
 
+  const CardTextBox = ({ children }: { children?: string }) => {
+    return (
+      <>
+        <div className="flex w-full">
+          <div className="flex-none font-bold content-center ml-3 text-gray-400">
+            {children}
+          </div>
+          <Textbox className="w-full p-2" id="question" />
+          <div className="flex-auto" />
+        </div>
+      </>
+    );
+  }
+
+
   const Card = ({ className }: { className?: string }) => {
+
     return (
       <div className={`${className} mb-6`}>
         <div className="w-full bg-white rounded-lg">
-          <div className="flex border-b-2 text-gray-400 p-4 font-bold text-lg">
+          <div className="flex border-b-2 text-gray-400 p-4 font-bold text-lg ">
             <span className="flex-auto">
               1
             </span>
-            <button className="flex-auto text-right hover:text-gray-600 duration-300">
-              X
-            </button>
-          </div>
-          <div>
-            <div className="group flex w-full">
-              <div className="flex-auto font-bold content-center ml-3 text-gray-400">
-                Q
-              </div>
-              <input className="flex-auto text-center outline-none py-2 w-full 
-                font-bold w-3/4 border-white focus:border-black border-b-2" 
-                placeholder="Enter your question here"/>
-              <div className="flex-auto"/>
-            </div>
-            <div className="flex">
-              <div className="flex flex-auto flex-col">
-                <div className="flex-auto">
-                  aasdf
-                </div>
-                <div className="flex-auto">
-                  aasdf
-                </div>
-              </div>
-              <div className="flex flex-auto flex-col">
-                <div className="flex-auto">
-                  aasdf
-                </div>
-                <div className="flex-auto">
-                  aasdf
-                </div>
-              </div>
+            <div className="flex-auto text-right">
+              <button className="hover:text-red-500 duration-100">
+                X
+              </button>
             </div>
           </div>
+          <CardTextBox>
+            Q&nbsp;
+          </CardTextBox>
+          <CardTextBox>
+            A1
+          </CardTextBox>
+          <CardTextBox>
+            A2
+          </CardTextBox>
+          <CardTextBox>
+            A3
+          </CardTextBox>
+          <CardTextBox>
+            A4
+          </CardTextBox>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-100 h-screen font-sans overflow-hidden">
+    <div className="bg-gray-100 min-h-screen font-sans overflow-hidden">
       <div className="flex flex-col h-full">
         <div className="flex-none content-center bg-white h-[40px]">
           Navbar
@@ -133,8 +143,11 @@ const CreateDeck = () => {
               Import
             </button>
             <div className="flex-auto">
-              <Card/>
-              <Card/>
+              <Card />
+              <Card />
+              <Card />
+              <Card />
+              <Card />
             </div>
           </div>
         </div>
