@@ -24,7 +24,7 @@ const CreateDeck = () => {
   const Textbox = (props: TextboxProps) => {
     const classes = `content-center overflow-hidden min-w-screen 
                      font-bold outline-none border-b-2 
-                     border-gray-200 focus:border-yellow-200 max-w-full`;
+                     border-gray-200 focus:border-yellow-300 max-w-full`;
     return (
       <div className={`${props.className}`}>
         <div className={classes} role="textbox" id={props.id}
@@ -52,12 +52,23 @@ const CreateDeck = () => {
             {children}
           </div>
           <Textbox className="w-full p-2" id="question" />
-          <div className="flex-auto" />
+          <div className="flex-auto">
+          </div>
         </div>
       </>
     );
   }
 
+  const AnswerButton = ({ children, className }: { children: string, className?:string }) => {
+    return (
+      <div className={className}>
+        <button className="border-gray-300 px-3 py-1 border-2 text-sm text-gray-400 
+          hover:bg-gray-100 duration-100 rounded-lg">
+          {children}
+        </button>
+      </div>
+    );
+  }
 
   const Card = ({ className }: { className?: string }) => {
 
@@ -68,6 +79,18 @@ const CreateDeck = () => {
             <span className="flex-auto">
               1
             </span>
+            <AnswerButton className="flex-auto text-center">
+              A1
+            </AnswerButton>
+            <AnswerButton className="flex-auto text-center">
+              A2
+            </AnswerButton>
+            <AnswerButton className="flex-auto text-center">
+              A3
+            </AnswerButton>
+            <AnswerButton className="flex-auto text-center">
+              A4
+            </AnswerButton>
             <div className="flex-auto text-right">
               <button className="hover:text-red-500 duration-100">
                 X
@@ -89,6 +112,8 @@ const CreateDeck = () => {
           <CardTextBox>
             A4
           </CardTextBox>
+          <div className="flex">
+          </div>
         </div>
       </div>
     );
