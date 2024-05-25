@@ -34,7 +34,7 @@ const Start = () => {
   }
 
   const startCallback = () => {
-    if (players > 0 && lobby !== "") {
+    if (players > 0 && lobby !== "" && deckIndex !== -1) {
       startGame(lobby, decks[deckIndex]).then((success) => {
         if (success) {
           client.channel(lobby).send({
