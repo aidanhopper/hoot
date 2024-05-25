@@ -1,11 +1,11 @@
 'use client'
 
-import { gameIsStarted } from '../../api';
+import { gameIsStarted, getDeck } from '../../api';
 import { useState, useEffect } from 'react';
 import client from '../../client';
 import QuestionInstance from '../../components/questioninstance';
-import deck from '../../deck.json'
 import { useRouter } from 'next/navigation';
+import { Deck } from '../../types';
 
 type question = {
   question: string;
@@ -22,8 +22,7 @@ const Session = () => {
   const [wait, setWait] = useState(true);
   const [answer, setAnswer] = useState<number | undefined>(undefined);
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
-
-  const qlist: question[] = deck['deck'];
+  const [deck, setDeck] = useState<Deck | undefined>(undefined);
 
   const getName = () => {
     const queryString = window.location.search;
@@ -57,6 +56,11 @@ const Session = () => {
 
   useEffect(() => {
     checkIfStarted();
+    const lobby_ = getLobby();
+    getDeck(lobby_).then((res) => {
+      setDeck(res);
+      console.log(res);
+    });
   }, []);
 
   // query the database on startup and subscribe to changes
@@ -97,8 +101,7 @@ const Session = () => {
     );
 
   }
-
-  // time is up for this question
+// time is up for this question
   else if (answer !== undefined) {
 
     const channel = client.channel(lobby);
@@ -116,9 +119,9 @@ const Session = () => {
 
     return (
       <div className="bg-white h-screen font-sans text-5xl overflow-hidden text-center content-center font-bold">
-        {currentQuestion < qlist.length - 2 && "Waiting to go to the next question"}
+        {currentQuestion < deck.questions.length - 1 && "Waiting to go to the next question"}
         {
-          currentQuestion >= qlist.length - 2 && 
+          currentQuestion >= deck.questions.length - 1 && 
           <button className="bg-green-300" onClick={() => router.push("/")}>
             Go to home page
           </button>
@@ -132,7 +135,7 @@ const Session = () => {
 
     return (
       <div className="bg-white h-screen font-sans overflow-hidden">
-        {currentQuestion != -1 && <QuestionInstance q={qlist[currentQuestion]} setAnswer={setAnswer} />}
+        {deck !== undefined && deck !== null && <QuestionInstance q={deck.questions[currentQuestion]} setAnswer={setAnswer} />}
       </div>
     );
 

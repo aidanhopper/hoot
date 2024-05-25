@@ -5,6 +5,7 @@ type Player = {
 
 type Lobby = {
   lobby: string;
+  deck: string;
   players: Player[];
   started: boolean;
 }
@@ -16,7 +17,8 @@ type Question = {
 }
 
 type Deck = {
-  name: string,
+  title: string,
+  description: string,
   questions: Question[],
 }
 

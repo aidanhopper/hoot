@@ -1,7 +1,7 @@
 'use server'
 
 import client from './client'
-import { Player, Question } from './types'
+import { Player, Question, Deck } from './types'
 
 const genLobby = () => {
 
@@ -55,11 +55,11 @@ const createLobby = async () => {
 
 }
 
-const startGame = async (lobby: string) => {
+const startGame = async (lobby: string, deck: Deck) => {
 
   const response = await client
     .from('lobbies')
-    .update({ started: true })
+    .update({ started: true, deck: deck })
     .eq('lobby', lobby);
 
   console.log(response);
@@ -152,35 +152,73 @@ const incrementScore = async (lobby: string, scores: any[]) => {
 }
 
 const createDeck = async (title: string, description: string, questions: Question[]) => {
-  console.log(questions);
-  if (title === "") {
-    console.log("HERE1");
-    return false;
-  }
 
-  if (!questions.length) {
-    console.log("HERE2");
+  if (title === "")
     return false;
-  }
 
-  if (questions.filter((question) => {
-    return !(
+  if (!questions.length)
+    return false;
+
+  const badQuestions = questions.filter((question) => {
+    return (
       question.answers[0] === "" ||
       question.answers[1] === "" ||
       question.answers[2] === "" ||
       question.answers[3] === "" ||
-      question.answer     === -1 ||
-      question.question   === ""
+      question.answer === -1 ||
+      question.question === ""
     );
-  }).length !== 0) {
-    console.log("HERE3");
+  });
+
+  console.log(badQuestions);
+
+  if (badQuestions.length !== 0)
     return false;
-  }
+
+  const response = await client
+    .from('deck')
+    .insert({
+      title: title,
+      description: description,
+      questions: questions,
+    })
+    .select();
+
+  console.log(response);
 
   return true;
 }
 
+const getDecks = async () => {
+
+  const response = await client
+    .from('deck')
+    .select('title,description,questions');
+
+  console.log(response)
+
+  return response.data;
+
+}
+
+const getDeck = async (lobby: string) => {
+
+  let response;
+  let i = 0;
+  do {
+    response = await client
+      .from('lobbies')
+      .select('deck')
+      .eq('lobby', lobby);
+    i++;
+  } while (response.data[0].deck === null && i < 100) 
+
+  return response.data[0].deck;
+
+}
+
 export {
   insertPlayer, createLobby, lobbyExists, getPlayerCount,
-  startGame, gameIsStarted, incrementScore, createDeck
+  startGame, gameIsStarted, incrementScore, createDeck,
+  getDecks, getDeck
 };

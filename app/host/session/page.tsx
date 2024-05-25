@@ -1,18 +1,13 @@
 'use client'
 
-import deck from '../../deck.json';
 import client from '../../client';
 import { useState, useEffect } from 'react';
 import { useStopwatch } from 'react-timer-hook';
 import TimerBar from '../../components/timerbar';
 import { Player } from '../../types';
 import { useRouter } from 'next/navigation';
+import { Deck, Question } from '../../types';
 
-type question = {
-  question: string;
-  answers: string[];
-  answer: number;
-}
 
 const Session = () => {
 
@@ -22,6 +17,7 @@ const Session = () => {
   const [questionIndex, setQuestionIndex] = useState(-1);
   const [playerData, setPlayerData] = useState([]);
   const [lobby, setLobby] = useState("");
+  const [deck, setDeck] = useState<Deck | undefined>(undefined);
 
   const getLobby = () => {
     const queryString = window.location.search;
@@ -44,6 +40,12 @@ const Session = () => {
 
   useEffect(() => {
 
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    setDeck(JSON.parse(decodeURIComponent(urlParams.get('deck'))));
+    console.log(deck);
+
     const lobby_ = getLobby();
 
     setLobby(lobby_);
@@ -60,7 +62,6 @@ const Session = () => {
 
   }, [playerData]);
 
-  const qlist: question[] = deck['deck'];
   const stopwatch = useStopwatch({ autoStart: true });
 
   const nextQuestion = () => {
@@ -96,7 +97,7 @@ const Session = () => {
     return (
       <div className="bg-white h-screen text-center content-center font-sans overflow-hidden">
         { 
-          questionIndex < qlist.length - 2 &&
+          questionIndex < deck.questions.length - 1 &&
           <button className="absolute left-10 top-10 bg-red-500 rounded-xl text-xl p-4 hover:scale-[101%]
                              duration-100 hover:saturate-105 active:scale-[101%]
                              shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
@@ -105,7 +106,7 @@ const Session = () => {
           </button>
         }
         { 
-          questionIndex >= qlist.length - 2 &&
+          questionIndex >= deck.questions.length - 1 &&
           <button className="absolute left-10 top-10 bg-blue-500 rounded-xl text-xl p-4 hover:scale-[101%]
                              duration-100 hover:saturate-105 active:scale-[101%]
                              shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
@@ -116,9 +117,9 @@ const Session = () => {
         {playerData.map((data) => {
           return (
             <div className="text-3xl" key={data.name}>
-              {`${data.name} answered ${qlist[questionIndex].answers[data.answer]} `}
-              {qlist[questionIndex].answer === data.answer && "WHICH IS CORRECT"}
-              {qlist[questionIndex].answer !== data.answer && "WHICH IS INCORRECT DUMMY"}
+              {`${data.name} answered ${deck.questions[questionIndex].answers[data.answer]} `}
+              {deck.questions[questionIndex].answer === data.answer && "WHICH IS CORRECT"}
+              {deck.questions[questionIndex].answer !== data.answer && "WHICH IS INCORRECT DUMMY"}
             </div>
           );
         })}
@@ -129,7 +130,7 @@ const Session = () => {
 
   return (
     <div className="bg-white font-bold text-center content-center text-5xl h-screen font-sans overflow-hidden">
-      {questionIndex !== -1 && qlist[questionIndex].question as unknown as JSX.Element}
+      {questionIndex !== -1 && deck.questions[questionIndex].question as unknown as JSX.Element}
       <div className="flex-auto">
         <TimerBar stopwatch={stopwatch} length={10 as number} onEndCallback={() => setTransition(true)} />
       </div>
