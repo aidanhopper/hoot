@@ -132,7 +132,7 @@ const Session = () => {
     <div className="bg-white font-bold text-center content-center text-5xl h-screen font-sans overflow-hidden">
       {questionIndex !== -1 && deck.questions[questionIndex].question as unknown as JSX.Element}
       <div className="flex-auto">
-        <TimerBar stopwatch={stopwatch} length={20 as number} onEndCallback={() => setTransition(true)} />session
+        <TimerBar stopwatch={stopwatch} length={20 as number} onEndCallback={() => setTransition(true)} />
       </div>
     </div>
   );
