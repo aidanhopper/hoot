@@ -1,7 +1,7 @@
 'use server'
 
 import client from './client'
-import { Player } from './types'
+import { Player, Question } from './types'
 
 const genLobby = () => {
 
@@ -151,7 +151,36 @@ const incrementScore = async (lobby: string, scores: any[]) => {
   let players = response.data[0].players;
 }
 
+const createDeck = async (title: string, description: string, questions: Question[]) => {
+  console.log(questions);
+  if (title === "") {
+    console.log("HERE1");
+    return false;
+  }
+
+  if (!questions.length) {
+    console.log("HERE2");
+    return false;
+  }
+
+  if (questions.filter((question) => {
+    return !(
+      question.answers[0] === "" ||
+      question.answers[1] === "" ||
+      question.answers[2] === "" ||
+      question.answers[3] === "" ||
+      question.answer     === -1 ||
+      question.question   === ""
+    );
+  }).length !== 0) {
+    console.log("HERE3");
+    return false;
+  }
+
+  return true;
+}
+
 export {
   insertPlayer, createLobby, lobbyExists, getPlayerCount,
-  startGame, gameIsStarted, incrementScore,
+  startGame, gameIsStarted, incrementScore, createDeck
 };

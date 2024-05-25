@@ -1,25 +1,25 @@
 'use client'
 
-import Deck from '../../deck.json';
 import { Question } from '../../types';
 import { useEffect, useState } from 'react';
 import Card from '../../components/deckcreatecard';
-
-
-type QuestionSlideProps = {
-  q: Question;
-}
-
-
+import { createDeck } from '../../api';
 
 const CreateDeck = () => {
 
   const [cards, setCards] = useState<Question[]>([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  useEffect(() => {
+    (document.getElementById("title") as HTMLInputElement).value = title;
+    (document.getElementById("description") as HTMLInputElement).value = title;
+  }, [])
 
   const AddButton = ({ className, onClick }: { className?: string, onClick: () => void }) => {
     return (
       <div className={className}>
-        <button className="border-b-4 py-1 border-green-400 hover:border-yellow-400
+        <button className="font-bold border-b-4 py-1 border-green-400 hover:border-yellow-400
           hover:text-yellow-400 duration-100 font-mono" onClick={onClick}>
           + ADD CARD
         </button>
@@ -39,19 +39,32 @@ const CreateDeck = () => {
               Create a new deck
             </span>
             <span className="flex-auto text-right">
-              <button className="border-gray-400 hover:bg-gray-200 text-blue-800
-                border-2 duration-200 py-1 px-8 rounded-lg">
+              <button className="border-gray-400 hover:bg-gray-200 text-gray-700
+                border-2 duration-200 py-1 px-8 rounded-lg"
+                onClick={() => {
+                  console.log(title)
+                  createDeck(title, description, cards).then((success) => {
+                    console.log("SUCCESS", success);
+                  });
+                }}
+              >
                 Create
               </button>
             </span>
           </div>
           <div className="flex-auto mt-12">
-            <label className="group">
+            <label>
               <span className="absolute text-gray-500 font-bold pt-1 text-xs px-4">
                 Title
               </span>
               <input className="font-bold outline-none pt-6 px-4 pb-1 w-full
                 border-b-2 border-white focus:border-black rounded-lg"
+                type="text"
+                id="title"
+                onInput={(event) => {
+                  setTitle(event.currentTarget.value);
+                  console.log(title)
+                }}
                 placeholder="Enter a title for your deck like best frog species for eating all the stupid bugs in your house that just dont go away even though you bought a bug zapper" />
             </label>
             <div className="flex mt-6">
@@ -62,6 +75,11 @@ const CreateDeck = () => {
                   </span>
                   <textarea className="w-full border-b-2 border-white focus:border-black
                     resize-none outline-none rounded-lg pt-6 px-4 h-32"
+                    onInput={(event) => {
+                      setDescription(event.currentTarget.value);
+                      console.log(description);
+                    }}
+                    id="description"
                     rows={1} cols={5} />
                 </div>
               </div>
@@ -71,13 +89,16 @@ const CreateDeck = () => {
                 </div>
               </div>
             </div>
-            <button className="border-gray-400 hover:bg-gray-200 text-blue-800
+            <button className="border-gray-400 hover:bg-gray-200 text-gray-700
               border-2 duration-200 py-1 px-4 rounded-lg my-12">
               Import
             </button>
             <div className="flex-auto">
               {cards.map((data, index) => {
-                return <Card key={index} index={index+1} question={data} />
+                return <Card key={index} index={index} q={data} remove={() => {
+                  cards.splice(index, 1);
+                  setCards([...cards]);
+                }} />
               })}
               <AddButton onClick={() => {
                 setCards(
