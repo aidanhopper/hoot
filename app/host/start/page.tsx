@@ -119,6 +119,7 @@ const Start = () => {
                             mb-4 px-4 pt-4 pb-3 rounded-lg border-white border-b-4 hover:border-yellow-400
                             duration-100 "
                             style={style}
+                            key={index}
                             onClick={() => setDeckIndex(index)}
                           >
                             <div className="font-bold">
