@@ -67,7 +67,6 @@ const Session = () => {
 
   const deckSelectedCallback = (payload: any) => {
     setDeck(payload.deck);
-    console.log(payload.deck);
   }
 
   // query the database on startup and subscribe to changes

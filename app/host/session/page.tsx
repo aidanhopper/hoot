@@ -31,9 +31,6 @@ const Session = () => {
       return data.name === payload.name;
     });
 
-    console.log(deck.questions);
-    console.log(questionIndex);
-
     if (player.length === 0)
       setPlayerData([...playerData, {
         name: payload.name,

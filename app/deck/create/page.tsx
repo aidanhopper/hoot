@@ -18,19 +18,21 @@ const CreateDeck = () => {
 
   const deckSelectorCallback = (deck: Deck) => {
     setCards(deck.questions);
+    (document.getElementById("title") as HTMLInputElement).value = deck.title;
+    (document.getElementById("description") as HTMLInputElement).value = deck.description;
     setDisplayDeckSelector(false);
   }
 
   useEffect(() => {
     (document.getElementById("title") as HTMLInputElement).value = title;
-    (document.getElementById("description") as HTMLInputElement).value = title;
+    (document.getElementById("description") as HTMLInputElement).value = description;
   }, [])
 
   const AddButton = ({ className, onClick }: { className?: string, onClick: () => void }) => {
     return (
       <div className={className}>
-        <button className="font-bold border-b-4 text-gray-400 py-1 border-green-400 hover:border-yellow-400
-          hover:text-yellow-400 duration-100 font-mono" onClick={onClick}>
+        <button className="font-bold border-b-[6px] text-gray-400 py-1 border-green-400 hover:border-yellow-400
+          hover:text-yellow-400 duration-100 font-mono text-xl" onClick={onClick}>
           + ADD CARD
         </button>
       </div>

@@ -21,7 +21,6 @@ const Start = () => {
 
 
   const broadcastDeck = (deck: Deck) => {
-    console.log("BROADCASINT DECK");
     client.channel(lobby).send({
       type: 'broadcast',
       event: 'deckSelected',
