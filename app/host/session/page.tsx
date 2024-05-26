@@ -133,9 +133,9 @@ const Session = () => {
 
         <div className="flex flex-col">
           {
-            playerData.map((data) => {
+            playerData.map((data, index) => {
               return (
-                <div className="text-3xl flex-auto">
+                <div key={index} className="text-3xl flex-auto">
                   {deck.questions[questionIndex].answer !== data.answers[data.answers.length-1].answerIndex &&
                       `${data.name} answered ${deck.questions[questionIndex].answers[data.answers[data.answers.length-1].answerIndex]} WHICH IS WRONG DUMMY`} 
                   {deck.questions[questionIndex].answer == data.answers[data.answers.length-1].answerIndex &&
