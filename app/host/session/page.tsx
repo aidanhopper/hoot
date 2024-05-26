@@ -15,9 +15,9 @@ const Session = () => {
 
   const [transition, setTransition] = useState(false);
   const [questionIndex, setQuestionIndex] = useState(-1);
-  const [playerData, setPlayerData] = useState<Player[] | undefined>(undefined);
+  const [playerData, setPlayerData] = useState<Player[] | undefined>([]);
   const [lobby, setLobby] = useState("");
-  const [deck, setDeck] = useState<Deck | undefined>(undefined);
+  const [deck, setDeck] = useState<Deck>(undefined);
 
   const getLobby = () => {
     const queryString = window.location.search;
@@ -25,11 +25,14 @@ const Session = () => {
     return urlParams.get('lobby');
   }
 
-  const answerRecieved = (payload: any) => {
+  const answerRecieved = (payload: any, deck: Deck) => {
 
     const player = playerData.filter((data) => {
       return data.name === payload.name;
     });
+
+    console.log(deck.questions);
+    console.log(questionIndex);
 
     if (player.length === 0)
       setPlayerData([...playerData, {
@@ -40,7 +43,8 @@ const Session = () => {
 
     else {
       setPlayerData([... playerData.map((data) => {
-        if (data.name === payload.name){
+        if (data.name === payload.name && 
+          data.answers.filter((answer) => {return answer.questionIndex === questionIndex }).length === 0){
           data.answers.push({
             questionIndex: questionIndex, answerIndex: payload.answer,
           });
@@ -55,26 +59,22 @@ const Session = () => {
 
   useEffect(() => {
 
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-
-    setDeck(JSON.parse(decodeURIComponent(urlParams.get('deck'))));
 
     const lobby_ = getLobby();
 
     setLobby(lobby_);
 
     const channel = client.channel(lobby_);
-
+    
     channel
       .on(
         'broadcast',
         { event: 'answer' },
-        (payload) => answerRecieved(payload.payload),
+        (payload) => answerRecieved(payload.payload, deck),
       )
       .subscribe();
 
-  }, [playerData]);
+  }, [playerData, questionIndex, deck]);
 
   const stopwatch = useStopwatch({ autoStart: true });
 
@@ -96,13 +96,13 @@ const Session = () => {
     setQuestionIndex(questionIndex + 1);
     stopwatch.reset();
 
-
-
-    setPlayerData([]);
-
   }
 
   useEffect(() => {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const deck_ = JSON.parse(decodeURIComponent(urlParams.get('deck')));
+    setDeck(deck_);
     nextQuestion();
   }, []);
 
