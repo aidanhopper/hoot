@@ -4,13 +4,22 @@ import { Question } from '../../types';
 import { useEffect, useState } from 'react';
 import Card from '../../components/deckcreatecard';
 import Navbar from '../../components/navbar';
+import DeckSelector from '../../components/deckselector';
 import { createDeck } from '../../api';
+import { Deck } from '../../types';
 
 const CreateDeck = () => {
 
   const [cards, setCards] = useState<Question[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+
+  const [displayDeckSelector, setDisplayDeckSelector] = useState(false);
+
+  const deckSelectorCallback = (deck: Deck) => {
+    setCards(deck.questions);
+    setDisplayDeckSelector(false);
+  }
 
   useEffect(() => {
     (document.getElementById("title") as HTMLInputElement).value = title;
@@ -31,6 +40,10 @@ const CreateDeck = () => {
   return (
     <div className="bg-gray-100 min-h-screen font-sans overflow-hidden">
       <Navbar/>
+      <DeckSelector
+        callback={deckSelectorCallback} 
+        display={displayDeckSelector}
+        setDisplay={setDisplayDeckSelector}/>
       <div className="flex flex-col h-full mt-16">
         <div className="flex-auto container m-auto pt-[50px] px-[200px]">
           <div className="flex">
@@ -87,7 +100,8 @@ const CreateDeck = () => {
               </div>
             </div>
             <button className="border-gray-400 hover:bg-gray-200 text-gray-700
-              border-2 duration-200 py-1 px-4 rounded-lg my-12">
+              border-2 duration-200 py-1 px-4 rounded-lg my-12"
+            onClick={() => setDisplayDeckSelector(true)}>
               Import
             </button>
             <div className="flex-auto">

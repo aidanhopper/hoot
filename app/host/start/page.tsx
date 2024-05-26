@@ -15,14 +15,10 @@ const Start = () => {
   const [lobby, setLobby] = useState<string>("");
   const [players, setPlayers] = useState<number>(-1);
 
+  const [deck, setDeck] = useState<Deck | undefined>(undefined);
 
   const [selectingDeck, setSelectingDeck] = useState(false);
-  const [decks, setDecks] = useState<Deck[]>([]);
-  const [deckIndex, setDeckIndex] = useState(-1);
 
-  useEffect(() => {
-    getDecks().then((ret) => setDecks(ret));
-  }, [])
 
   const broadcastDeck = (deck: Deck) => {
     console.log("BROADCASINT DECK");
@@ -46,20 +42,20 @@ const Start = () => {
       getPlayerCount(lobby).then((count: number) => {
         setPlayers(count);
       });
-      broadcastDeck(decks[deckIndex]);
+      broadcastDeck(deck);
     }
   }
 
   const startCallback = () => {
-    if (players > 0 && lobby !== "" && deckIndex !== -1) {
-      startGame(lobby, decks[deckIndex]).then((success) => {
+    if (players > 0 && lobby !== "" && deck !== undefined) {
+      startGame(lobby, deck).then((success) => {
         if (success) {
           client.channel(lobby).send({
             type: 'broadcast',
             event: 'start',
             payload: {},
           });
-          router.push(`/host/session?lobby=${lobby}&deck=${encodeURIComponent(JSON.stringify(decks[deckIndex]))}`);
+          router.push(`/host/session?lobby=${lobby}&deck=${encodeURIComponent(JSON.stringify(deck))}`);
         }
       });
     }
@@ -100,30 +96,29 @@ const Start = () => {
 
     // return () => channel.unsubscribe();
 
-  }, [players, decks, deckIndex]);
+  }, [players, deck]);
 
   return (
     <>
-      {selectingDeck &&
-        <DeckSelector 
-          deckSelectedHook={broadcastDeck}
-          setSelectingDeck={setSelectingDeck} 
-          setDeckIndex={setDeckIndex} 
-          deckIndex={deckIndex} 
-          decks={decks} />
-      }
+    <DeckSelector 
+      callback={(deck) => {
+        broadcastDeck(deck);
+        setDeck(deck);
+      }}
+      display={selectingDeck}
+      setDisplay={setSelectingDeck}/>
       <Navbar />
       <div className="bg-gray-100 h-screen text-center content-center font-sans overflow-hidden">
         <div className="text-9xl font-bold">
           {lobby !== "" && lobby}
           {lobby === "" && <>&nbsp;</>}
           <br />
-          {deckIndex === -1 && <span className="text-3xl">Please select a deck to play</span>}
+          {deck === undefined && <span className="text-3xl">Please select a deck to play</span>}
           {
-            deckIndex !== -1 &&
+            deck !== undefined &&
             <>
               <span className="text-3xl">
-                {`Playing ${decks[deckIndex].title}`}
+                {`Playing ${deck.title}`}
               </span>
             </>
           }
