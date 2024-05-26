@@ -107,7 +107,7 @@ const Session = () => {
   if (wait) {
 
     return (
-      <div className="bg-white h-screen font-bold text-center text-5xl content-center font-sans overflow-hidden">
+      <div className="bg-gray-100 h-screen font-bold text-center text-5xl content-center font-sans overflow-hidden">
         Waiting for host to start the game
       </div>
     );
@@ -138,7 +138,7 @@ const Session = () => {
     channel.unsubscribe();
 
     return (
-      <div className="bg-white h-screen font-sans text-5xl overflow-hidden text-center content-center font-bold">
+      <div className="h-screen bg-gray-100 font-sans text-5xl overflow-hidden text-center content-center font-bold">
         {currentQuestion < deck.questions.length - 1 && "Waiting to go to the next question"}
         {
           currentQuestion >= deck.questions.length - 1 && 
@@ -154,8 +154,9 @@ const Session = () => {
   else {
 
     return (
-      <div className="bg-white h-screen font-sans overflow-hidden">
-        {deck !== undefined && deck !== null && <QuestionInstance q={deck.questions[currentQuestion]} setAnswer={setAnswer} />}
+      <div className="bg-gray-100 h-screen font-sans overflow-hidden">
+        {deck !== undefined && deck !== null && 
+          <QuestionInstance q={deck.questions[currentQuestion]} setAnswer={setAnswer} />}
       </div>
     );
 

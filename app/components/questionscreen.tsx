@@ -22,16 +22,16 @@ const QuestionScreen = (props: QuestionScreenProps) => {
         <div className="flex flex-col flex-auto mt-20 text-center">
           <div className="flex flex-auto">
             <AnswerButton
-              color="bg-green-300"
-              borderColor="border-green-500"
+              color="bg-green-200"
+              borderColor="border-green-300"
               id={0 as number}
               selected={props.selectedIndex}
               callback={() => props.setSelectedIndex(0)}>
               {props.answers[0] as unknown as JSX.Element}
             </AnswerButton>
             <AnswerButton
-              color="bg-blue-300"
-              borderColor="border-blue-500"
+              color="bg-blue-200"
+              borderColor="border-blue-300"
               id={1 as number}
               selected={props.selectedIndex}
               callback={() => props.setSelectedIndex(1)}>
@@ -40,16 +40,16 @@ const QuestionScreen = (props: QuestionScreenProps) => {
           </div>
           <div className="flex flex-auto">
             <AnswerButton
-              color="bg-yellow-300"
-              borderColor="border-yellow-500"
+              color="bg-yellow-200"
+              borderColor="border-yellow-300"
               id={2 as number}
               selected={props.selectedIndex}
               callback={() => props.setSelectedIndex(2)}>
               {props.answers[2] as unknown as JSX.Element}
             </AnswerButton>
             <AnswerButton
-              color="bg-purple-300"
-              borderColor="border-purple-500"
+              color="bg-purple-200"
+              borderColor="border-purple-300"
               id={3 as number}
               selected={props.selectedIndex}
               callback={() => props.setSelectedIndex(3)}>

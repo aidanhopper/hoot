@@ -109,12 +109,12 @@ const Session = () => {
   if (transition) {
 
     return (
-      <div className="bg-white h-screen text-center content-center font-sans overflow-hidden">
+      <div className="bg-gray-100 h-screen text-center content-center font-sans overflow-hidden">
 
         { 
           questionIndex < deck.questions.length - 1 &&
-          <button className="absolute left-10 top-10 bg-red-500 rounded-xl text-xl p-4 hover:scale-[101%]
-                             duration-100 hover:saturate-105 active:scale-[101%]
+          <button className="absolute left-10 top-10 bg-white rounded-xl text-xl p-4 hover:scale-[101%]
+                             duration-100 active:scale-[101%] border-2 border-gray-200
                              shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
             onClick={nextQuestion}>
             Next question
@@ -123,8 +123,8 @@ const Session = () => {
 
         { 
           questionIndex >= deck.questions.length - 1 &&
-          <button className="absolute left-10 top-10 bg-blue-500 rounded-xl text-xl p-4 hover:scale-[101%]
-                             duration-100 hover:saturate-105 active:scale-[101%]
+          <button className="absolute left-10 top-10 bg-white rounded-xl text-xl p-4 hover:scale-[101%]
+                             duration-100 active:scale-[101%] border-2 border-gray-200
                              shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
             onClick={() => router.push("/")}>
               Go to home page
@@ -138,7 +138,7 @@ const Session = () => {
                 <div key={index} className="text-3xl flex-auto">
                   {deck.questions[questionIndex].answer !== data.answers[data.answers.length-1].answerIndex &&
                       `${data.name} answered ${deck.questions[questionIndex].answers[data.answers[data.answers.length-1].answerIndex]} WHICH IS WRONG DUMMY`} 
-                  {deck.questions[questionIndex].answer == data.answers[data.answers.length-1].answerIndex &&
+                  {deck.questions[questionIndex].answer === data.answers[data.answers.length-1].answerIndex &&
                       `${data.name} answered ${deck.questions[questionIndex].answers[data.answers[data.answers.length-1].answerIndex]} WHICH IS CORRECT`}
                 </div>
               );
@@ -162,7 +162,7 @@ const Session = () => {
   }
 
   return (
-    <div className="bg-white font-bold text-center content-center text-5xl h-screen font-sans overflow-hidden">
+    <div className="bg-gray-100 font-bold text-center content-center text-5xl h-screen font-sans overflow-hidden">
       {questionIndex !== -1 && deck.questions[questionIndex].question as unknown as JSX.Element}
       <div className="flex-auto">
         <TimerBar stopwatch={stopwatch} length={20 as number} onEndCallback={() => setTransition(true)} />
