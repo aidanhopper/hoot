@@ -23,6 +23,7 @@ const Session = () => {
   const [answer, setAnswer] = useState<number | undefined>(undefined);
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const [deck, setDeck] = useState<Deck | undefined>(undefined);
+  const [lateJoin, setLateJoin] = useState(false);
 
   const getName = () => {
     const queryString = window.location.search;
@@ -42,6 +43,7 @@ const Session = () => {
 
   const nextQuestion = (payload: { index: number }) => {
     setAnswer(undefined);
+    setLateJoin(false);
     setCurrentQuestion(payload.index);
   }
 
@@ -49,8 +51,13 @@ const Session = () => {
     const lobby_ = getLobby();
     gameIsStarted(lobby_)
       .then((started) => {
-        if (started)
+        if (started) {
+          getDeck(lobby_).then((deck) => {
+            setDeck(deck);
+          }) 
+          setLateJoin(true);
           start();
+        }
       })
   }
 
@@ -107,6 +114,14 @@ const Session = () => {
 
   }
 // time is up for this question
+  else if (lateJoin) {
+    return ( 
+      <div className="h-screen bg-gray-100 text-5xl content-center text-center font-bold font-sans">
+        Please wait for the next question 
+      </div>
+    )
+  } 
+
   else if (answer !== undefined) {
 
     const channel = client.channel(lobby);

@@ -204,6 +204,7 @@ const getDecks = async () => {
 
 const getDeck = async (lobby: string) => {
 
+  console.log(lobby)
   let response;
   let i = 0;
   do {
@@ -212,7 +213,8 @@ const getDeck = async (lobby: string) => {
       .select('deck')
       .eq('lobby', lobby);
     i++;
-  } while (response.data[0].deck === null && i < 100) 
+    console.log(response);
+  } while (response === null || response.data === null || response.data[0].deck === null && i < 100) 
 
   return response.data[0].deck;
 
