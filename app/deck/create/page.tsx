@@ -51,7 +51,7 @@ const CreateDeck = () => {
               Create a new deck
             </span>
             <span className="flex-auto text-right">
-              <button className="border-gray-400 hover:bg-gray-200 text-gray-700
+              <button className="border-gray-300 hover:bg-gray-200 text-gray-500
                 border-2 duration-200 py-1 px-8 rounded-lg"
                 onClick={() => {
                   console.log(title)
@@ -99,7 +99,7 @@ const CreateDeck = () => {
                 </div>
               </div>
             </div>
-            <button className="border-gray-400 hover:bg-gray-200 text-gray-700
+            <button className="border-gray-300 hover:bg-gray-200 text-gray-500
               border-2 duration-200 py-1 px-4 rounded-lg my-12"
               onClick={() => setDisplayDeckSelector(true)}>
               Import

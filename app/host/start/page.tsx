@@ -104,6 +104,7 @@ const Start = () => {
       callback={(deck) => {
         broadcastDeck(deck);
         setDeck(deck);
+        setSelectingDeck(false);
       }}
       display={selectingDeck}
       setDisplay={setSelectingDeck}/>
