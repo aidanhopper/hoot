@@ -56,12 +56,12 @@ const Session = () => {
 
   useEffect(() => {
     checkIfStarted();
-    const lobby_ = getLobby();
-    getDeck(lobby_).then((res) => {
-      setDeck(res);
-      console.log(res);
-    });
   }, []);
+
+  const deckSelectedCallback = (payload: any) => {
+    setDeck(payload.deck);
+    console.log(payload.deck);
+  }
 
   // query the database on startup and subscribe to changes
   // also set name and lobby
@@ -85,10 +85,15 @@ const Session = () => {
         { event: 'nextQuestion' },
         (payload) => nextQuestion(payload.payload),
       )
+      .on(
+        'broadcast',
+        { event: 'deckSelected' },
+        (payload) => deckSelectedCallback(payload.payload),
+      )
       .subscribe();
 
 
-  }, [currentQuestion]);
+  }, [currentQuestion, deck]);
 
 
   // wait for host to start the game

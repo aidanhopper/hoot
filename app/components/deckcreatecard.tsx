@@ -24,11 +24,11 @@ const Textbox = (props: TextboxProps) => {
   );
 }
 
-const CardTextBox = ({ children, text, onInput }:
-  { children?: string, text?: string, onInput: (event: any) => void }) => {
+const CardTextBox = ({ children, text, onInput, className }:
+  { children?: string, text?: string, onInput: (event: any) => void, className?: string }) => {
   return (
     <>
-      <div className="flex w-full">
+      <div className={`flex w-full ${className}`}>
         <div className="flex-none font-bold content-center ml-4 mr-2 text-gray-400">
           {children}
         </div>
@@ -66,7 +66,8 @@ const Card = ({ className, q, index, remove }:
   const [lastClicked, setLastClicked] = useState(`A${q.answer + 1}`);
 
   return (
-    <div className={`${className} mb-6`}>
+    <div className={`${className} mb-6 animate-fade-down duration-100 
+      transition-transform`}>
       <div className="w-full bg-white rounded-lg">
         <div className="flex border-b-2 text-gray-400 p-4 font-bold text-lg ">
           <span className="flex-auto">
@@ -123,7 +124,7 @@ const Card = ({ className, q, index, remove }:
         <CardTextBox text={q.answers[2]} onInput={(str: string) => q.answers[2] = str}>
           A3
         </CardTextBox>
-        <CardTextBox text={q.answers[3]} onInput={(str: string) => q.answers[3] = str}>
+        <CardTextBox className="pb-2" text={q.answers[3]} onInput={(str: string) => q.answers[3] = str}>
           A4
         </CardTextBox>
       </div>

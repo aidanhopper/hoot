@@ -3,6 +3,7 @@
 import { Question } from '../../types';
 import { useEffect, useState } from 'react';
 import Card from '../../components/deckcreatecard';
+import Navbar from '../../components/navbar';
 import { createDeck } from '../../api';
 
 const CreateDeck = () => {
@@ -19,7 +20,7 @@ const CreateDeck = () => {
   const AddButton = ({ className, onClick }: { className?: string, onClick: () => void }) => {
     return (
       <div className={className}>
-        <button className="font-bold border-b-4 py-1 border-green-400 hover:border-yellow-400
+        <button className="font-bold border-b-4 text-gray-400 py-1 border-green-400 hover:border-yellow-400
           hover:text-yellow-400 duration-100 font-mono" onClick={onClick}>
           + ADD CARD
         </button>
@@ -29,10 +30,8 @@ const CreateDeck = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen font-sans overflow-hidden">
-      <div className="flex flex-col h-full">
-        <div className="flex-none content-center bg-white h-[40px]">
-          Navbar
-        </div>
+      <Navbar/>
+      <div className="flex flex-col h-full mt-16">
         <div className="flex-auto container m-auto pt-[50px] px-[200px]">
           <div className="flex">
             <span className="flex-auto font-bold text-xl content-center">
@@ -63,7 +62,6 @@ const CreateDeck = () => {
                 id="title"
                 onInput={(event) => {
                   setTitle(event.currentTarget.value);
-                  console.log(title)
                 }}
                 placeholder="Enter a title for your deck like best frog species for eating all the stupid bugs in your house that just dont go away even though you bought a bug zapper" />
             </label>
@@ -77,7 +75,6 @@ const CreateDeck = () => {
                     resize-none outline-none rounded-lg pt-6 px-4 h-32"
                     onInput={(event) => {
                       setDescription(event.currentTarget.value);
-                      console.log(description);
                     }}
                     id="description"
                     rows={1} cols={5} />
@@ -108,7 +105,7 @@ const CreateDeck = () => {
                     answer: -1,
                   }]
                 )
-              }} className="text-center w-full mb-12" />
+              }} className="text-center rounded-lg py-5 bg-white w-full mb-12" />
             </div>
           </div>
         </div>

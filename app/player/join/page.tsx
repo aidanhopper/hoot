@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { insertPlayer } from '../../api';
+import Navbar from '../../components/navbar';
 
 const Join = () => {
 
@@ -47,7 +48,8 @@ const Join = () => {
   }
 
   return (
-    <div className="bg-white h-screen text-center font-sans overflow-hidden">
+    <div className="bg-gray-100 h-screen text-center font-sans overflow-hidden">
+      <Navbar/>
       <div className="w-1/4 h-screen m-auto content-center">
         <span className="flex-auto font-bold text-2xl text-right">
           Enter Session Information
@@ -56,18 +58,18 @@ const Join = () => {
           <span className="flex-auto text-xl text-right">
             Name
           </span>
-          <input id="playerName" className="flex-auto h-8 border-b-4 ml-5"
+          <input id="playerName" className="flex-auto border-b-4 rounded-lg p-2 ml-5"
             style={inputStyle} placeholder="Ben Dover" />
         </div>
         <div className="pt-5">
           <span className="flex-auto text-xl content-begin text-right">
             ID &nbsp; &nbsp; &nbsp; &nbsp;
           </span>
-          <input id="playerID" className="flex-none border-b-4 ml-5" style={inputStyle} placeholder="1234" />
+          <input id="playerID" className="flex-none border-b-4 ml-5 rounded-lg p-2" style={inputStyle} placeholder="1234" />
         </div>
         <div className="pt-5">
-          <button className="bg-red-500 p-2 rounded-xl shadow-[5px_5px_2px_rgb(0,0,0,0.25)] 
-            duration-[0.3s] hover:scale-[105%] hover:saturate-110"
+          <button className="bg-white border-2 border-gray-200 p-2 rounded-xl shadow-[5px_5px_2px_rgb(0,0,0,0.25)] 
+            duration-[0.3s] hover:scale-[103%] hover:saturate-110"
             onClick={() => {
               if (document !== null) {
                 const name = (document.getElementById("playerName") as HTMLInputElement).value;
