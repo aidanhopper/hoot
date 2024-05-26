@@ -100,6 +100,7 @@ const insertPlayer = async (lobby: string, name: string) => {
   players.push({
     name: name,
     score: 0,
+    answers: [],
   });
 
   // update players array associated with the lobby 
