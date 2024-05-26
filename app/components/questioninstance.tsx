@@ -39,7 +39,7 @@ const QuestionInstance = ({ q, setAnswer }: QuestionInstanceProps) => {
         setSelectedIndex={setSelectedIndex}
       />
       <div className="flex-auto"/>
-      <TimerBar stopwatch={stopwatch} length={5 as number} onEndCallback={() => setAnswer(selectedIndex)}/>
+      <TimerBar stopwatch={stopwatch} length={20 as number} onEndCallback={() => setAnswer(selectedIndex)}/>
     </div>
   );
 
