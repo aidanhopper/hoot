@@ -39,11 +39,11 @@ const CreateDeck = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen font-sans overflow-hidden">
-      <Navbar/>
+      <Navbar />
       <DeckSelector
-        callback={deckSelectorCallback} 
+        callback={deckSelectorCallback}
         display={displayDeckSelector}
-        setDisplay={setDisplayDeckSelector}/>
+        setDisplay={setDisplayDeckSelector} />
       <div className="flex flex-col h-full mt-16">
         <div className="flex-auto container m-auto pt-[50px] px-[200px]">
           <div className="flex">
@@ -101,7 +101,7 @@ const CreateDeck = () => {
             </div>
             <button className="border-gray-400 hover:bg-gray-200 text-gray-700
               border-2 duration-200 py-1 px-4 rounded-lg my-12"
-            onClick={() => setDisplayDeckSelector(true)}>
+              onClick={() => setDisplayDeckSelector(true)}>
               Import
             </button>
             <div className="flex-auto">
