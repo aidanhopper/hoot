@@ -1,6 +1,7 @@
 type Player = {
   name: string;
   score: number;
+  answers: { questionIndex: number, answerIndex: number}[],
 }
 
 type Lobby = {
