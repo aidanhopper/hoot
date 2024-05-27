@@ -48,13 +48,29 @@ const Start = () => {
   const startCallback = () => {
     if (players > 0 && lobby !== "" && deck !== undefined) {
       startGame(lobby, deck).then((success) => {
+
         if (success) {
+
           client.channel(lobby).send({
             type: 'broadcast',
             event: 'start',
             payload: {},
           });
-          router.push(`/host/session?lobby=${lobby}&deck=${encodeURIComponent(JSON.stringify(deck))}`);
+
+          sessionStorage.setItem('state', null);
+          sessionStorage.setItem('lobby', lobby);
+          sessionStorage.setItem('deck', JSON.stringify(deck))
+
+          client.channel(lobby).send({
+            type: 'broadcast',
+            event: 'nextQuestion',
+            payload: {
+              question: deck.questions[0].question,
+              answers: deck.questions[0].answers,
+            },
+          });
+
+          router.push(`/host/session`);
         }
       });
     }
@@ -72,6 +88,8 @@ const Start = () => {
     getPlayerCount(lob).then((count: number) => {
       setPlayers(count);
     });
+    sessionStorage.setItem('playerData', null);
+    sessionStorage.setItem('questionIndex', null);
   }, []);
 
   // subscribe to player joining
@@ -99,14 +117,14 @@ const Start = () => {
 
   return (
     <>
-    <DeckSelector 
-      callback={(deck) => {
-        broadcastDeck(deck);
-        setDeck(deck);
-        setSelectingDeck(false);
-      }}
-      display={selectingDeck}
-      setDisplay={setSelectingDeck}/>
+      <DeckSelector
+        callback={(deck) => {
+          broadcastDeck(deck);
+          setDeck(deck);
+          setSelectingDeck(false);
+        }}
+        display={selectingDeck}
+        setDisplay={setSelectingDeck} />
       <Navbar />
       <div className="bg-gray-100 h-screen text-center content-center font-sans overflow-hidden">
         <div className="text-9xl font-bold">

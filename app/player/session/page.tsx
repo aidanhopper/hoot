@@ -25,6 +25,9 @@ const Session = () => {
   const [deck, setDeck] = useState<Deck | undefined>(undefined);
   const [lateJoin, setLateJoin] = useState(false);
 
+  const [question, setQuestion] = useState("");
+  const [answers, setAnswers] = useState<string[]>([])
+
   const getName = () => {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
@@ -41,10 +44,13 @@ const Session = () => {
     setWait(false);
   }
 
-  const nextQuestion = (payload: { index: number }) => {
+  const nextQuestion = ({ question, answers }:
+    { question: string, answers: string[] }) => {
     setAnswer(undefined);
+    setQuestion(question);
+    console.log(question)
+    setAnswers(answers);
     setLateJoin(false);
-    setCurrentQuestion(payload.index);
   }
 
   const checkIfStarted = () => {
@@ -155,7 +161,11 @@ const Session = () => {
     return (
       <div className="bg-gray-100 h-screen font-sans overflow-hidden">
         {deck !== undefined && deck !== null && 
-          <QuestionInstance q={deck.questions[currentQuestion]} setAnswer={setAnswer} />}
+          <QuestionInstance q={{
+            answer: -1,
+            answers: answers,
+            question: question,
+          }} setAnswer={setAnswer} />}
       </div>
     );
 

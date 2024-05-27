@@ -196,15 +196,12 @@ const getDecks = async () => {
     .from('deck')
     .select('title,description,questions');
 
-  console.log(response)
-
   return response.data;
 
 }
 
 const getDeck = async (lobby: string) => {
 
-  console.log(lobby)
   let response;
   let i = 0;
   do {

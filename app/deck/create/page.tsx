@@ -10,6 +10,7 @@ import { Deck } from '../../types';
 
 const CreateDeck = () => {
 
+
   const [cards, setCards] = useState<Question[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -17,16 +18,44 @@ const CreateDeck = () => {
   const [displayDeckSelector, setDisplayDeckSelector] = useState(false);
 
   const deckSelectorCallback = (deck: Deck) => {
+
     setCards(deck.questions);
+    sessionStorage.setItem('cards', JSON.stringify(deck.questions));
+
     (document.getElementById("title") as HTMLInputElement).value = deck.title;
+    setTitle(deck.title);
+    sessionStorage.setItem('title', deck.title);
+
     (document.getElementById("description") as HTMLInputElement).value = deck.description;
+    setDescription(deck.description);
+    sessionStorage.setItem('description', deck.description);
+
     setDisplayDeckSelector(false);
+
   }
 
+
   useEffect(() => {
-    (document.getElementById("title") as HTMLInputElement).value = title;
-    (document.getElementById("description") as HTMLInputElement).value = description;
+
+    const storedTitle = () => sessionStorage.getItem('title') !== null ?
+        sessionStorage.getItem('title') : "";
+
+    const storedDescription = () => sessionStorage.getItem('description') !== null ?
+        sessionStorage.getItem('description') : "";
+
+    setCards(
+      () => sessionStorage.getItem('cards') !== null ? 
+        JSON.parse(sessionStorage.getItem('cards')) : []
+    );
+
+    setTitle(storedTitle());
+    setDescription(storedDescription());
+
+    (document.getElementById("title") as HTMLInputElement).value = storedTitle();
+    (document.getElementById("description") as HTMLInputElement).value = storedDescription();
+
   }, [])
+
 
   const AddButton = ({ className, onClick }: { className?: string, onClick: () => void }) => {
     return (
@@ -77,6 +106,7 @@ const CreateDeck = () => {
                 id="title"
                 onInput={(event) => {
                   setTitle(event.currentTarget.value);
+                  sessionStorage.setItem('title', title);
                 }}
                 placeholder="Enter a title for your deck like best frog species for eating all the stupid bugs in your house that just dont go away even though you bought a bug zapper" />
             </label>
@@ -90,6 +120,7 @@ const CreateDeck = () => {
                     resize-none outline-none rounded-lg pt-6 px-4 h-32"
                     onInput={(event) => {
                       setDescription(event.currentTarget.value);
+                      sessionStorage.setItem('description', event.currentTarget.value);
                     }}
                     id="description"
                     rows={1} cols={5} />
@@ -108,19 +139,23 @@ const CreateDeck = () => {
             </button>
             <div className="flex-auto">
               {cards.map((data, index) => {
-                return <Card key={index} index={index} q={data} remove={() => {
+                return <Card key={index} index={index} q={data}
+                  onInput={() => sessionStorage.setItem('cards', JSON.stringify([... cards]))}
+                  remove={() => {
                   cards.splice(index, 1);
                   setCards([...cards]);
+                  sessionStorage.setItem('cards', JSON.stringify([... cards]));
                 }} />
               })}
               <AddButton onClick={() => {
-                setCards(
+                const newCards =
                   [...cards, {
                     question: "",
                     answers: [],
                     answer: -1,
-                  }]
-                )
+                  }];
+                setCards(newCards)
+                sessionStorage.setItem('cards', JSON.stringify(newCards));
               }} className="text-center rounded-lg py-5 bg-white w-full mb-12" />
             </div>
           </div>

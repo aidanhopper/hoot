@@ -60,8 +60,8 @@ const AnswerButton = ({ children, className, onClick, lastClicked }:
   );
 }
 
-const Card = ({ className, q, index, remove }:
-  { className?: string, q: Question, index: number, remove: () => void }) => {
+const Card = ({ className, q, index, remove, onInput }:
+  { className?: string, q: Question, index: number, remove: () => void, onInput: () => void }) => {
 
   const [lastClicked, setLastClicked] = useState(`A${q.answer + 1}`);
 
@@ -78,6 +78,7 @@ const Card = ({ className, q, index, remove }:
             onClick={() => {
               q.answer = 0;
               setLastClicked("A1");
+              onInput();
             }}>
             A1
           </AnswerButton>
@@ -86,6 +87,7 @@ const Card = ({ className, q, index, remove }:
             onClick={() => {
               q.answer = 1;
               setLastClicked("A2");
+              onInput();
             }}>
             A2
           </AnswerButton>
@@ -94,6 +96,7 @@ const Card = ({ className, q, index, remove }:
             onClick={() => {
               q.answer = 2;
               setLastClicked("A3");
+              onInput();
             }}>
             A3
           </AnswerButton>
@@ -102,6 +105,7 @@ const Card = ({ className, q, index, remove }:
             onClick={() => {
               q.answer = 3;
               setLastClicked("A4");
+              onInput();
             }}>
             A4
           </AnswerButton>
@@ -112,19 +116,34 @@ const Card = ({ className, q, index, remove }:
             </button>
           </div>
         </div>
-        <CardTextBox text={q.question} onInput={(str: string) => q.question = str}>
+        <CardTextBox text={q.question} onInput={(str: string) => {
+          q.question = str;
+          onInput();
+        }}>
           Q&nbsp;
         </CardTextBox>
-        <CardTextBox text={q.answers[0]} onInput={(str: string) => q.answers[0] = str}>
+        <CardTextBox text={q.answers[0]} onInput={(str: string) => {
+          q.answers[0] = str;
+          onInput();
+        }}>
           A1
         </CardTextBox>
-        <CardTextBox text={q.answers[1]} onInput={(str: string) => q.answers[1] = str}>
+        <CardTextBox text={q.answers[1]} onInput={(str: string) => {
+          q.answers[1] = str;
+          onInput();
+        }}>
           A2
         </CardTextBox>
-        <CardTextBox text={q.answers[2]} onInput={(str: string) => q.answers[2] = str}>
+        <CardTextBox text={q.answers[2]} onInput={(str: string) => {
+          q.answers[2] = str;
+          onInput();
+        }}>
           A3
         </CardTextBox>
-        <CardTextBox className="pb-2" text={q.answers[3]} onInput={(str: string) => q.answers[3] = str}>
+        <CardTextBox className="pb-2" text={q.answers[3]} onInput={(str: string) => {
+          q.answers[3] = str
+          onInput();
+        }}>
           A4
         </CardTextBox>
       </div>

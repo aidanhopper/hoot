@@ -1,171 +1,270 @@
 'use client'
 
 import client from '../../client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useStopwatch } from 'react-timer-hook';
 import TimerBar from '../../components/timerbar';
 import { Player } from '../../types';
 import { useRouter } from 'next/navigation';
 import { Deck, Question } from '../../types';
-import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, LabelList } from 'recharts';
+
+type State = {
+  finished?: boolean;
+  scoreScreen?: boolean;
+  questionScreen?: boolean;
+  questionIndex?: number;
+  playerData?: Player[];
+  lobby?: string;
+  deck?: Deck | undefined;
+  seconds?: number,
+  currentQuestionTimeSlice?: number,
+  questionTimeSlice?: number,
+}
 
 const Session = () => {
 
   const router = useRouter();
 
-  const [transition, setTransition] = useState(false);
-  const [questionIndex, setQuestionIndex] = useState(-1);
-  const [playerData, setPlayerData] = useState<Player[] | undefined>([]);
-  const [lobby, setLobby] = useState("");
-  const [deck, setDeck] = useState<Deck>(undefined);
+  const stopwatch = useStopwatch({ autoStart: true });
 
-  const getLobby = () => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    return urlParams.get('lobby');
-  }
+  const [state, setState] = useState<State>({
+    finished: false,
+    scoreScreen: false,
+    questionScreen: true,
+    questionIndex: 0,
+    playerData: [],
+    lobby: "",
+    seconds: 0,
+    questionTimeSlice: 10,
+    currentQuestionTimeSlice: 10,
+  });
 
-  const answerRecieved = (payload: any, deck: Deck) => {
-
-    const player = playerData.filter((data) => {
-      return data.name === payload.name;
-    });
-
-    if (player.length === 0)
-      setPlayerData([...playerData, {
-        name: payload.name,
-        score: payload.answer = deck.questions[questionIndex].answer ? 1 : 0, 
-        answers: [{questionIndex: questionIndex, answerIndex: payload.answer}],
-      }]);
-
-    else {
-      setPlayerData([... playerData.map((data) => {
-        if (data.name === payload.name && 
-          data.answers.filter((answer) => {return answer.questionIndex === questionIndex }).length === 0){
-          data.answers.push({
-            questionIndex: questionIndex, answerIndex: payload.answer,
-          });
-          if (payload.answer === deck.questions[questionIndex].answer)
-            data.score += 1;
-        }
-        return data;
-      })]);
+  const combineState = (newState: State) => {
+    return {
+      finished: newState.finished !== undefined ?
+        newState.finished : state.finished,
+      scoreScreen: newState.scoreScreen !== undefined ?
+        newState.scoreScreen : state.scoreScreen,
+      questionScreen: newState.questionScreen !== undefined ?
+        newState.questionScreen : state.questionScreen,
+      questionIndex: newState.questionIndex !== undefined ?
+        newState.questionIndex : state.questionIndex,
+      playerData: newState.playerData !== undefined ?
+        newState.playerData : state.playerData,
+      lobby: newState.lobby !== undefined ?
+        newState.lobby : state.lobby,
+      deck: newState.deck !== undefined ?
+        newState.deck : state.deck,
+      seconds: newState.seconds !== undefined ?
+        newState.seconds : state.seconds,
+      currentQuestionTimeSlice: newState.currentQuestionTimeSlice !== undefined ?
+        newState.currentQuestionTimeSlice : state.currentQuestionTimeSlice,
+      questionTimeSlice: newState.questionTimeSlice !== undefined ?
+        newState.questionTimeSlice : state.questionTimeSlice,
     }
   }
 
+  const loadState = () => {
+    const newState = sessionStorage.getItem('state') !== 'null' ?
+      JSON.parse(sessionStorage.getItem('state')) :
+      state
+    newState.lobby = sessionStorage.getItem('lobby');
+    newState.deck = JSON.parse(sessionStorage.getItem('deck'));
+    newState.currentQuestionTimeSlice -= newState.seconds;
+    updateState(newState);
+  }
 
-  useEffect(() => {
+  const writeState = (newState: State) => {
+    const combinedState = combineState(newState);
+    sessionStorage.setItem('state', JSON.stringify(combinedState));
+  }
 
+  const updateState = (newState: State) => {
+    const combinedState = combineState(newState);
+    setState(combinedState);
+    writeState(combinedState);
+  }
 
-    const lobby_ = getLobby();
+  const nextQuestionCallback = () => {
 
-    setLobby(lobby_);
+    stopwatch.reset();
 
-    const channel = client.channel(lobby_);
-    
-    channel
-      .on(
-        'broadcast',
-        { event: 'answer' },
-        (payload) => answerRecieved(payload.payload, deck),
-      )
-      .subscribe();
-
-  }, [playerData, questionIndex, deck]);
-
-  const stopwatch = useStopwatch({ autoStart: true });
-
-  const nextQuestion = () => {
-
-    const channel = client.channel(lobby);
-
-    channel.send({
+    client.channel(state.lobby).send({
       type: 'broadcast',
       event: 'nextQuestion',
       payload: {
-        index: questionIndex + 1,
+        question: state.deck.questions[state.questionIndex + 1].question,
+        answers: state.deck.questions[state.questionIndex + 1].answers,
       },
     });
 
-    channel.unsubscribe();
-
-    setTransition(false);
-    setQuestionIndex(questionIndex + 1);
-    stopwatch.reset();
+    updateState({
+      questionScreen: true,
+      scoreScreen: false,
+      currentQuestionTimeSlice: state.questionTimeSlice,
+      questionIndex: state.questionIndex + 1,
+    });
 
   }
 
+  const answerRecievedCallback = ({ answer, name }:
+    { answer: number, name: string }) => {
+
+    // check if player is already in playerData
+    const present = state.playerData.filter((data) => {
+      return data.name === name;
+    }).length > 0;
+
+    if (present) {
+      const newPlayerData = [...state.playerData.map((data) => {
+        if (data.name === name) {
+          const answerExists = data.answers.filter(
+            (answer) => answer.questionIndex === state.questionIndex).length === 0;
+          if (answerExists) {
+            data.answers = [...data.answers, {
+              questionIndex: state.questionIndex,
+              answerIndex: answer,
+            }];
+            data.score += answer === state.deck.questions[state.questionIndex].answer ? 1 : 0;
+          }
+        }
+        return data;
+      })];
+      updateState({ playerData: newPlayerData });
+    }
+
+    else {
+      const newPlayerData = [...state.playerData, {
+        name: name,
+        score: answer === state.deck.questions[state.questionIndex].answer ? 1 : 0,
+        answers: [{
+          questionIndex: state.questionIndex,
+          answerIndex: answer,
+        }],
+      }];
+      updateState({ playerData: newPlayerData });
+    }
+
+  }
+
+  if (typeof sessionStorage !== 'undefined' && stopwatch.seconds !== state.seconds)
+    updateState({ seconds: stopwatch.seconds });
+
+  const initialized = useRef(false);
   useEffect(() => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const deck_ = JSON.parse(decodeURIComponent(urlParams.get('deck')));
-    setDeck(deck_);
-    nextQuestion();
+    if (!initialized.current) {
+      loadState();
+      initialized.current = true;
+    }
   }, []);
 
-  if (transition) {
+  useEffect(() => {
+    client.channel(sessionStorage.getItem('lobby'))
+      .on(
+        'broadcast',
+        { event: 'answer' },
+        (payload) => answerRecievedCallback(payload.payload),
+      )
+      .subscribe();
+  }, [state.playerData, state.questionIndex]);
 
-    return (
-      <div className="bg-gray-100 h-screen text-center content-center font-sans overflow-hidden">
+  return (
+    <div className="bg-gray-100 h-screen">
 
-        { 
-          questionIndex < deck.questions.length - 1 &&
-          <button className="absolute left-10 top-10 bg-white rounded-xl text-xl p-4 hover:scale-[101%]
-                             duration-100 active:scale-[101%] border-2 border-gray-200
-                             shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
-            onClick={nextQuestion}>
-            Next question
+      {
+        initialized.current &&
+        <div className="absolute w-full text-3xl font-bold">
+          <div className="flex w-full p-4">
+            <span className="flex-auto">
+              {state.questionIndex + 1} / {state.deck.questions.length}
+            </span>
+            <span className="flex-auto text-center">
+              {
+                state.scoreScreen &&
+                <>
+                  Correct answer: {
+                    state.deck.questions[state.questionIndex]
+                        .answers[state.deck.questions[state.questionIndex].answer]
+                  }
+                </>
+              }
+            </span>
+            <span className="flex-auto" />
+          </div>
+        </div>
+      }
+
+      {
+        state.questionScreen && initialized.current &&
+        <>
+          <div className="h-screen content-center text-center text-5xl font-bold">
+            {state.deck.questions[state.questionIndex].question}
+          </div>
+          <TimerBar length={state.currentQuestionTimeSlice} stopwatch={stopwatch}
+            onEndCallback={() => {
+              if (state.questionIndex + 1 < state.deck.questions.length)
+                updateState({
+                  questionScreen: false,
+                  scoreScreen: true,
+                });
+              else
+                updateState({
+                  questionScreen: false,
+                  scoreScreen: false,
+                  finished: true,
+                });
+            }} />
+        </>
+      }
+
+      {
+        state.scoreScreen && initialized.current &&
+        <div className="text-center content-center h-screen text-5xl">
+
+          <button
+            className="bg-white border-2 border-gray-200 p-3 rounded-lg
+                       shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
+            onClick={nextQuestionCallback}>
+            next question
           </button>
-        }
 
-        { 
-          questionIndex >= deck.questions.length - 1 &&
-          <button className="absolute left-10 top-10 bg-white rounded-xl text-xl p-4 hover:scale-[101%]
-                             duration-100 active:scale-[101%] border-2 border-gray-200
-                             shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
-            onClick={() => router.push("/")}>
-              Go to home page
-          </button>
-        }
-
-        <div className="flex flex-col">
           {
-            playerData.map((data, index) => {
+            state.playerData.map((data) => {
               return (
-                <div key={index} className="text-3xl flex-auto">
-                  {deck.questions[questionIndex].answer !== data.answers[data.answers.length-1].answerIndex &&
-                      `${data.name} answered ${deck.questions[questionIndex].answers[data.answers[data.answers.length-1].answerIndex]} WHICH IS WRONG DUMMY`} 
-                  {deck.questions[questionIndex].answer === data.answers[data.answers.length-1].answerIndex &&
-                      `${data.name} answered ${deck.questions[questionIndex].answers[data.answers[data.answers.length-1].answerIndex]} WHICH IS CORRECT`}
-                </div>
+                <>
+                  {
+                    data.answers[data.answers.length - 1].questionIndex === state.questionIndex &&
+                    data.answers[data.answers.length - 1].answerIndex !== -1 &&
+                    <div className="mt-6 text-3xl">
+                      {data.name} answered {
+                        state.deck.questions[state.questionIndex]
+                          .answers[data.answers[data.answers.length - 1].answerIndex]
+                      } and has a score of {data.score}!
+                    </div>
+                  }
+                </>
               );
             })
           }
+
         </div>
+      }
 
-        <ResponsiveContainer width="100%" height="50%">
-          <BarChart width={150} height={40} 
-            data={playerData}>
-            <XAxis dataKey="name"/>
-            <YAxis label="Score" hide={true} domain={[0, deck.questions.length]} tickCount={0}/>
-            <Bar dataKey="score" fill="#8884d8">
-              <LabelList dataKey="score" position="top"/>
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-         
-      </div>
-    );
-  }
+      {
+        state.finished &&
+        <div className="h-screen content-center text-center font-bold text-5xl">
+          <button
+            className="bg-white border-2 border-gray-200 p-3 rounded-lg
+                       shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
+            onClick={() => router.push("/")}>
+            Go home
+          </button>
+        </div>
+      }
 
-  return (
-    <div className="bg-gray-100 font-bold text-center content-center text-5xl h-screen font-sans overflow-hidden">
-      {questionIndex !== -1 && deck.questions[questionIndex].question as unknown as JSX.Element}
-      <div className="flex-auto">
-        <TimerBar stopwatch={stopwatch} length={20 as number} onEndCallback={() => setTransition(true)} />
-      </div>
     </div>
   );
+
 }
 
 export default Session;

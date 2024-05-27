@@ -9,11 +9,11 @@ import { Question } from '../types';
 
 type QuestionInstanceProps = {
   q: Question,
-  setAnswer: (num: number) => void 
+  setAnswer: (num: number) => void
 }
 
 const QuestionInstance = ({ q, setAnswer }: QuestionInstanceProps) => {
-  
+
   // place holder values
   const question = "what time is it?";
   const answerArray = ["1", "123", "3", "4"];
@@ -29,8 +29,8 @@ const QuestionInstance = ({ q, setAnswer }: QuestionInstanceProps) => {
 
   return (
     <div className="flex h-screen flex-col m-auto">
-      <div className="flex-auto"/>
-      <div className="flex-auto"/>
+      <div className="flex-auto" />
+      <div className="flex-auto" />
       <QuestionScreen
         question={q.question}
         className="flex-auto"
@@ -38,8 +38,8 @@ const QuestionInstance = ({ q, setAnswer }: QuestionInstanceProps) => {
         selectedIndex={selectedIndex}
         setSelectedIndex={setSelectedIndex}
       />
-      <div className="flex-auto"/>
-      <TimerBar stopwatch={stopwatch} length={20 as number} onEndCallback={() => setAnswer(selectedIndex)}/>
+      <div className="flex-auto" />
+      <TimerBar stopwatch={stopwatch} length={10 as number} onEndCallback={() => setAnswer(selectedIndex)} />
     </div>
   );
 

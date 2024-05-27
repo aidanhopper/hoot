@@ -5,10 +5,11 @@ import { useEffect } from 'react';
 type timerbar = {
   length: number;
   stopwatch: any;
+  offset: number;
   onEndCallback?: () => void;
 }
 
-const TimerBar = ({ length, stopwatch, onEndCallback }: timerbar) => {
+const TimerBar = ({ length, stopwatch, offset, onEndCallback }: timerbar) => {
 
   const seconds = stopwatch.seconds;
 
@@ -16,11 +17,11 @@ const TimerBar = ({ length, stopwatch, onEndCallback }: timerbar) => {
 
   const barstyle = {
     transition: `width ${len / 2}s linear`,
-    width: `${(seconds / (len)) * 100 * 2 < 100 ? (seconds / (len)) * 100 * 2 : 100}%`,
+    width: `${seconds / len * 100 * 2 < 100 ? seconds / len * 100 * 2 : 100}%`,
   }
 
   useEffect(() => {
-    if (seconds === length)
+    if (seconds >= length)
       onEndCallback();
   }, [seconds]);
 
