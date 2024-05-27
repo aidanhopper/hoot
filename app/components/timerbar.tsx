@@ -5,11 +5,10 @@ import { useEffect } from 'react';
 type timerbar = {
   length: number;
   stopwatch: any;
-  offset: number;
   onEndCallback?: () => void;
 }
 
-const TimerBar = ({ length, stopwatch, offset, onEndCallback }: timerbar) => {
+const TimerBar = ({ length, stopwatch, onEndCallback }: timerbar) => {
 
   const seconds = stopwatch.seconds;
 
