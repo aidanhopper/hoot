@@ -48,9 +48,9 @@ const Join = () => {
   }
 
   return (
-    <div className="bg-gray-100 h-screen text-center font-sans overflow-hidden">
+    <div className="bg-gray-100 h-screen text-center font-sans overflow-hidden text-black">
       <Navbar/>
-      <div className="w-1/4 h-screen m-auto content-center">
+      <div className="lg:w-1/4 h-screen m-auto content-center">
         <span className="flex-auto font-bold text-2xl text-right">
           Enter Session Information
         </span>

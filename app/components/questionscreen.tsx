@@ -16,11 +16,8 @@ const QuestionScreen = (props: QuestionScreenProps) => {
   return (
     <div className={props.className as string}>
       <div className="justify-center mx-auto flex flex-col container place-content-center">
-        <div className="font-bold flex-auto text-center text-6xl content-center">
-          {props.question}
-        </div>
-        <div className="flex flex-col flex-auto mt-20 text-center">
-          <div className="flex flex-auto">
+        <div className="flex flex-col flex-auto text-center">
+          <div className="flex flex-col lg:flex-row flex-auto">
             <AnswerButton
               color="bg-green-200"
               borderColor="border-green-300"
@@ -38,7 +35,7 @@ const QuestionScreen = (props: QuestionScreenProps) => {
               {props.answers[1] as unknown as JSX.Element}
             </AnswerButton>
           </div>
-          <div className="flex flex-auto">
+          <div className="flex flex-col lg:flex-row flex-auto">
             <AnswerButton
               color="bg-yellow-200"
               borderColor="border-yellow-300"

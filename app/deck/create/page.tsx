@@ -128,7 +128,6 @@ const CreateDeck = () => {
               </div>
               <div className="flex-auto w-full">
                 <div className="pl-6">
-                  placeholder
                 </div>
               </div>
             </div>

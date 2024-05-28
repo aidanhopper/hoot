@@ -1,32 +1,16 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import AnswerButton from './answerbutton';
-import TimerBar from './timerbar';
 import QuestionScreen from './questionscreen';
-import { useStopwatch } from 'react-timer-hook';
 import { Question } from '../types';
 
 type QuestionInstanceProps = {
-  q: Question,
-  setAnswer: (num: number) => void
+  q: Question;
+  selectedIndex: number;
+  setSelectedIndex: (num: number) => void;
 }
 
-const QuestionInstance = ({ q, setAnswer }: QuestionInstanceProps) => {
-
-  // place holder values
-  const question = "what time is it?";
-  const answerArray = ["1", "123", "3", "4"];
-
-  const stopwatch = useStopwatch({ autoStart: true });
-
-  // the amount of time on the timer in seconds
-  const timeSlice = 5;
-
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-
-  // sets a interval that increments every 1 milisecond
-
+const QuestionInstance = ({ q, selectedIndex, setSelectedIndex }: QuestionInstanceProps) => {
   return (
     <div className="flex h-screen flex-col m-auto">
       <div className="flex-auto" />
@@ -39,7 +23,6 @@ const QuestionInstance = ({ q, setAnswer }: QuestionInstanceProps) => {
         setSelectedIndex={setSelectedIndex}
       />
       <div className="flex-auto" />
-      <TimerBar stopwatch={stopwatch} length={10 as number} onEndCallback={() => setAnswer(selectedIndex)} />
     </div>
   );
 

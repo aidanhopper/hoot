@@ -90,6 +90,7 @@ const Start = () => {
     });
     sessionStorage.setItem('playerData', null);
     sessionStorage.setItem('questionIndex', null);
+    router.prefetch('/host/session');
   }, []);
 
   // subscribe to player joining

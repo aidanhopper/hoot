@@ -16,8 +16,8 @@ const AnswerButton = ({ children, color, borderColor, id, selected, callback }:
   else
     displayColor += color + " border-4 " + borderColor;
 
-  let classes = `flex-auto shadow-[5px_5px_2px_rgb(0,0,0,0.25)] p-32 m-5 rounded-lg text-3xl
-                   hover:scale-[101%] duration-100 w-1/2 
+  let classes = `flex-auto shadow-[5px_5px_2px_rgb(0,0,0,0.25)] p-8 lg:p-32 m-5 rounded-lg text-2xl lg:text-3xl
+                   hover:scale-[101%] duration-100 hover:saturate-150 lg:w-1/2 
                    active:scale-[101%] ` + displayColor;
 
   return (

@@ -69,7 +69,7 @@ const Card = ({ className, q, index, remove, onInput }:
     <div className={`${className} mb-6 animate-fade-down duration-100 
       transition-transform`}>
       <div className="w-full bg-white rounded-lg">
-        <div className="flex border-b-2 text-gray-400 p-4 font-bold text-lg ">
+        <div className="flex border-b-2 text-gray-400 p-4 font-bold text-lg">
           <span className="flex-auto">
             {index + 1}
           </span>
@@ -111,7 +111,7 @@ const Card = ({ className, q, index, remove, onInput }:
           </AnswerButton>
           <div className="flex-auto text-right">
             <button className="hover:text-red-500 duration-100"
-            onClick={remove}>
+              onClick={remove}>
               X
             </button>
           </div>

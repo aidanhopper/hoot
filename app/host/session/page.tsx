@@ -147,6 +147,31 @@ const Session = () => {
 
   }
 
+  const handleQuestionEnd = () => {
+    if (state.questionIndex + 1 < state.deck.questions.length) {
+      updateState({
+        questionScreen: false,
+        scoreScreen: true,
+      });
+      client.channel(state.lobby).send({
+        type: 'broadcast',
+        event: 'questionEnd',
+        payload: {},
+      });
+    } else {
+      updateState({
+        questionScreen: false,
+        scoreScreen: false,
+        finished: true,
+      });
+      client.channel(state.lobby).send({
+        type: 'broadcast',
+        event: 'end',
+        payload: {},
+      });
+    }
+  }
+
   if (typeof sessionStorage !== 'undefined' && stopwatch.seconds !== state.seconds)
     updateState({ seconds: stopwatch.seconds });
 
@@ -184,7 +209,7 @@ const Session = () => {
                 <>
                   Correct answer: {
                     state.deck.questions[state.questionIndex]
-                        .answers[state.deck.questions[state.questionIndex].answer]
+                      .answers[state.deck.questions[state.questionIndex].answer]
                   }
                 </>
               }
@@ -201,19 +226,7 @@ const Session = () => {
             {state.deck.questions[state.questionIndex].question}
           </div>
           <TimerBar length={state.currentQuestionTimeSlice} stopwatch={stopwatch}
-            onEndCallback={() => {
-              if (state.questionIndex + 1 < state.deck.questions.length)
-                updateState({
-                  questionScreen: false,
-                  scoreScreen: true,
-                });
-              else
-                updateState({
-                  questionScreen: false,
-                  scoreScreen: false,
-                  finished: true,
-                });
-            }} />
+            onEndCallback={handleQuestionEnd} />
         </>
       }
 

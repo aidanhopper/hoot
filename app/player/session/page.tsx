@@ -24,6 +24,7 @@ const Session = () => {
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const [deck, setDeck] = useState<Deck | undefined>(undefined);
   const [lateJoin, setLateJoin] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState<string[]>([])
@@ -50,6 +51,7 @@ const Session = () => {
     setQuestion(question);
     console.log(question)
     setAnswers(answers);
+    setSelectedIndex(-1);
     setLateJoin(false);
   }
 
@@ -60,7 +62,7 @@ const Session = () => {
         if (started) {
           getDeck(lobby_).then((deck) => {
             setDeck(deck);
-          }) 
+          })
           setLateJoin(true);
           start();
         }
@@ -102,30 +104,41 @@ const Session = () => {
         { event: 'deckSelected' },
         (payload) => deckSelectedCallback(payload.payload),
       )
+      .on(
+        'broadcast',
+        { event: 'end' },
+        () => { },
+      )
+      .on(
+        'broadcast',
+        { event: 'questionEnd' },
+        () => setAnswer(selectedIndex),
+      )
       .subscribe();
 
 
-  }, [currentQuestion, deck]);
+  }, [currentQuestion, deck, selectedIndex]);
 
 
   // wait for host to start the game
   if (wait) {
 
     return (
-      <div className="bg-gray-100 h-screen font-bold text-center text-5xl content-center font-sans overflow-hidden">
+      <div className="bg-gray-100 h-screen font-bold text-center text-5xl 
+        content-center font-sans overflow-hidden text-black">
         Waiting for host to start the game
       </div>
     );
 
   }
-// time is up for this question
+  // time is up for this question
   else if (lateJoin) {
-    return ( 
-      <div className="h-screen bg-gray-100 text-5xl content-center text-center font-bold font-sans">
-        Please wait for the next question 
+    return (
+      <div className="h-screen bg-gray-100 text-5xl content-center text-center font-bold font-sans text-black">
+        Please wait for the next question
       </div>
     )
-  } 
+  }
 
   else if (answer !== undefined) {
 
@@ -140,13 +153,16 @@ const Session = () => {
       },
     });
 
+    console.log("broadcasting", answer, name);
+
     channel.unsubscribe();
 
     return (
-      <div className="h-screen bg-gray-100 font-sans text-5xl overflow-hidden text-center content-center font-bold">
+      <div className="h-screen bg-gray-100 font-sans text-5xl overflow-hidden 
+        text-center content-center font-bold text-black">
         {currentQuestion < deck.questions.length - 1 && "Waiting to go to the next question"}
         {
-          currentQuestion >= deck.questions.length - 1 && 
+          currentQuestion >= deck.questions.length - 1 &&
           <button className="bg-green-300" onClick={() => router.push("/")}>
             Go to home page
           </button>
@@ -159,13 +175,20 @@ const Session = () => {
   else {
 
     return (
-      <div className="bg-gray-100 h-screen font-sans overflow-hidden">
-        {deck !== undefined && deck !== null && 
-          <QuestionInstance q={{
-            answer: -1,
-            answers: answers,
-            question: question,
-          }} setAnswer={setAnswer} />}
+      <div className="bg-gray-100 h-screen font-sans overflow-hidden text-black">
+
+        {
+          deck !== undefined && deck !== null &&
+          <QuestionInstance
+            q={{
+              answer: -1,
+              answers: answers,
+              question: question,
+            }}
+            setSelectedIndex={setSelectedIndex}
+            selectedIndex={selectedIndex} />
+        }
+
       </div>
     );
 
