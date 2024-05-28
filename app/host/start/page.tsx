@@ -129,14 +129,14 @@ const Start = () => {
       <Navbar />
       <div className="bg-gray-100 h-screen text-center content-center font-sans overflow-hidden">
         <div className="text-9xl font-bold">
-          {lobby !== "" && lobby}
+          {lobby !== "" && `trivit.xyz/${lobby}`}
           {lobby === "" && <>&nbsp;</>}
           <br />
-          {deck === undefined && <span className="text-3xl">Please select a deck to play</span>}
+          {deck === undefined && <span className="text-3xl font-normal">Please select a deck to play</span>}
           {
             deck !== undefined &&
             <>
-              <span className="text-3xl">
+              <span className="text-3xl font-normal">
                 {`Playing ${deck.title}`}
               </span>
             </>
