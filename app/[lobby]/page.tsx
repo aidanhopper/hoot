@@ -1,14 +1,14 @@
 'use client'
 
 import { useRouter, usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { insertPlayer } from '../api';
 
 const Invite = () => {
 
   const router = useRouter();
 
-  const lobby = usePathname().substring(1);
+  const lobby = usePathname().substring(1).toUpperCase();
 
   const [inputStyle, setInputStyle] = useState({});
 

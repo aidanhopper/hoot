@@ -35,8 +35,8 @@ const Session = () => {
     playerData: [],
     lobby: "",
     seconds: 0,
-    questionTimeSlice: 10,
-    currentQuestionTimeSlice: 10,
+    questionTimeSlice: 20,
+    currentQuestionTimeSlice: 20,
   });
 
   const combineState = (newState: State) => {
