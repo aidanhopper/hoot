@@ -2,6 +2,11 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 
+type PathElement = {
+  type: "col" | "row";
+  direction: "left" | "right";
+}
+
 type Content = {
   text: string;
 }
@@ -17,6 +22,34 @@ type Section = {
   height: number;
 }
 
+const isTop = (path: PathElement[]) => {
+  return path
+    .filter((elem: PathElement) => elem.type === "col")
+    .filter((elem: PathElement) => elem.direction === "right")
+    .length === 0;
+}
+
+const isBottom = (path: PathElement[]) => {
+  return path
+    .filter((elem: PathElement) => elem.type === "col")
+    .filter((elem: PathElement) => elem.direction === "left")
+    .length === 0;
+}
+
+const isLeft = (path: PathElement[]) => {
+  return path
+    .filter((elem: PathElement) => elem.type === "row")
+    .filter((elem: PathElement) => elem.direction === "right")
+    .length === 0;
+}
+
+const isRight = (path: PathElement[]) => {
+  return path
+    .filter((elem: PathElement) => elem.type === "row")
+    .filter((elem: PathElement) => elem.direction === "left")
+    .length === 0;
+}
+
 const TraverseHelper: React.ElementType = (
   {
     section,
@@ -25,32 +58,16 @@ const TraverseHelper: React.ElementType = (
   }
     : {
       section: Section | undefined,
-      path: ("left" | "right")[],
-      handleSplit: (type: "vertical" | "horizontal" | "full", path: ("left" | "right")[]) => void
+      path: PathElement[],
+      handleSplit: (
+        type: "vertical" | "horizontal" | "full",
+        path: PathElement[],
+      ) => void
     }
 ) => {
 
   const [displayHorizontalSplit, setDisplayHorizontalSplit] = useState(false);
   const [displayVerticalSplit, setDisplayVerticalSplit] = useState(false);
-
-  const Mover = () => {
-    return (
-      <div className="h-full w-full content-start">
-        <div className={`-translate-y-[6px] w-full h-[10px]`}>
-          <button className="flex mx-auto h-full bg-black w-8 justify-center" />
-        </div>
-      </div>
-    );
-  }
-
-  const Container = ({ children, className }:
-    { children?: React.ReactNode, className?: string }) => {
-    return (
-      <div className={`flex absolute h-full w-full ${className}`}>
-        {children}
-      </div>
-    );
-  }
 
   const VerticalSplit = () => {
     return (
@@ -68,21 +85,11 @@ const TraverseHelper: React.ElementType = (
     );
   }
 
-  const Splitter = () => {
+  const Splitter = ({ className }: { className?: string }) => {
     return (
-      <Container className="bg-gray-100 bg-opacity-50">
 
-        {
-          displayVerticalSplit &&
-          <VerticalSplit />
-        }
-
-        {
-          displayHorizontalSplit &&
-          <HorizontalSplit />
-        }
-
-        <div className="relative w-full h-full m-auto content-center ">
+      <div className={`${className}`}>
+        <div className={`relative w-[50px] `}>
           <div className="h-[50px] w-[50px] m-auto drop-shadow">
 
             <button className="rounded absolute ml-[17px] mt-[16px] z-10 w-4 m-auto h-4 bg-gray-300
@@ -127,7 +134,7 @@ const TraverseHelper: React.ElementType = (
           </div>
         </div>
 
-      </Container>
+      </div>
     );
   }
 
@@ -135,38 +142,74 @@ const TraverseHelper: React.ElementType = (
 
     <>
 
+
       {
         section.type !== "leaf" &&
-        <div className={`w-[${section.width}%] h-[${section.height}%] 
-                        flex-auto flex flex-${section.type}`}>
-          {
-            section.left !== undefined &&
-            <TraverseHelper
-              section={section.left}
-              path={[...path, "left"]}
-              handleSplit={handleSplit} />
-          }
-          {
-            section.right !== undefined &&
-            <TraverseHelper
-              section={section.right}
-              path={[...path, "right"]}
-              handleSplit={handleSplit} />
-          }
-        </div>
+        <>
+          <div className={`w-[${section.width}%] h-[${section.height}%] 
+                          flex-auto flex flex-${section.type}`}>
+            {
+              section.left !== undefined &&
+              <TraverseHelper
+                section={section.left}
+                path={[...path, { direction: "left", type: section.type }]}
+                handleSplit={handleSplit} />
+            }
+            {
+              section.right !== undefined &&
+              <TraverseHelper
+                section={section.right}
+                path={[...path, { direction: "right", type: section.type }]}
+                handleSplit={handleSplit} />
+            }
+          </div>
+        </>
       }
 
       {
         section.type === "leaf" &&
         <>
-          <div className={`relative w-[${section.width}%] h-[${section.height}%] border border-black`}>
-            <Splitter />
 
-            {
-              section.parent !== undefined &&
-              section === section.parent.left &&
-              <Mover />
-            }
+          <div className={`relative w-[${section.width}%] h-[${section.height}%] border-2 border-black`}>
+            <div className="absolute h-full w-full">
+
+              {
+                !isTop(path) &&
+                <button className="absolute z-50 -translate-y-[7px] w-full h-2"
+                  onClick={() => {
+                  }}
+                />
+              }
+
+              {
+                !isLeft(path) &&
+                <button className="absolute z-50 -translate-x-[7px] w-2 h-full"
+                  onClick={() => {
+                  }}
+                />
+              }
+
+              <div className="z-10 relative h-full w-full">
+                <div className="flex flex-col absolute z-20 w-full h-full justify-center items-center">
+                  <div className="absolute w-full h-full p-2">
+                    {section.id}
+                  </div>
+                  <div className="flex-auto" />
+                  <Splitter className="flex-auto content-center" />
+                  <div className="flex-auto " />
+                </div>
+                {
+                  displayVerticalSplit &&
+                  <VerticalSplit />
+                }
+
+                {
+                  displayHorizontalSplit &&
+                  <HorizontalSplit />
+                }
+
+              </div>
+            </div>
 
             <div className="text-center w-[100%] h-[100%] content-center">
               {
@@ -191,13 +234,14 @@ const Traverse: React.ElementType = (
   }
     : {
       section: Section | undefined,
-      handleSplit: (type: "vertical" | "horizontal" | "full", path: ("left" | "right")[]) => void
+      handleSplit: (
+        type: "vertical" | "horizontal" | "full",
+        path: PathElement[],
+      ) => void
     }
 ) => {
   return (
-    <>
-      <TraverseHelper section={section} path={[]} handleSplit={handleSplit} />
-    </>
+    <TraverseHelper section={section} path={[]} handleSplit={handleSplit} />
   )
 }
 
@@ -215,16 +259,16 @@ const ContentManagementSystem = () => {
 
   const handleSplit = (
     type: "vertical" | "horizontal" | "full",
-    path: ("left" | "right")[]
+    path: PathElement[],
   ) => {
 
     // find the parent of the element to insert
     const newSection = structuredClone(section);
     let parent = newSection;
     for (let i = 0; i < path.length; i++)
-      if (path[i] === "left")
+      if (path[i].direction === "left")
         parent = parent.left;
-      else if (path[i] === "right")
+      else if (path[i].direction === "right")
         parent = parent.right;
 
     const leftLeaf: Section = {
@@ -237,7 +281,7 @@ const ContentManagementSystem = () => {
 
     const rightLeaf: Section = structuredClone(leftLeaf);
     rightLeaf.id = nextId.current++;
-    
+
     parent.left = leftLeaf;
     parent.right = rightLeaf;
 
@@ -246,7 +290,6 @@ const ContentManagementSystem = () => {
 
     else if (type === "horizontal")
       parent.type = "col";
-
 
     setSection(newSection);
   }
