@@ -2,11 +2,22 @@
 
 import { useRouter } from 'next/navigation';
 import Navbar from './components/navbar';
+import { useEffect } from 'react';
 import { createLobby } from './api';
 
 const Home = () => {
 
   const router = useRouter();
+
+  useEffect(() => {
+
+    console.log('mounting');
+
+    return () => {
+      console.log('unmounting');
+    }
+
+  }, []);
 
   return (
     <>
@@ -39,7 +50,15 @@ const Home = () => {
               Player
             </button>
           </div>
-          <div className="flex-auto" />
+          <div className="flex-auto" >
+            <button className="shadow-[5px_5px_2px_rgb(0,0,0,0.25)] duration-100 
+              hover:scale-[101%] hover:saturate-150 lg:w-1/2 p-10 rounded-xl bg-white
+              border-gray-200 border-2 text-3xl"
+              onClick={() => router.push("/cms")}
+            >
+              cms
+            </button>
+          </div>
           <div className="flex-auto" />
         </div>
         <div className="flex-auto m-auto">

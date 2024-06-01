@@ -181,6 +181,7 @@ const Session = () => {
       loadState();
       initialized.current = true;
     }
+
   }, []);
 
   useEffect(() => {
