@@ -7,6 +7,11 @@ type PathElement = {
   direction: "left" | "right";
 }
 
+type Mouse = {
+  movement: "horizontal" | "vertical",
+  target: number,
+}
+
 type Content = {
   text: string;
 }
@@ -50,11 +55,41 @@ const isRight = (path: PathElement[]) => {
     .length === 0;
 }
 
+const getRoot = (section: Section) => {
+  while (section.parent !== undefined)
+    section = section.parent;
+  return section
+}
+
+const getId = (section: Section | undefined, id: number): Section | undefined => {
+  if (section === undefined)
+    return undefined;
+
+  if (section.id === id)
+    return section;
+
+  const left = getId(section.left, id);
+  const right = getId(section.right, id);
+
+  if (left !== undefined)
+    return left;
+  if (right !== undefined)
+    return right;
+  return undefined;
+
+}
+
+const del = (section: Section) => {
+
+}
+
 const TraverseHelper: React.ElementType = (
   {
     section,
     path,
     handleSplit,
+    setMouse,
+    mouse,
   }
     : {
       section: Section | undefined,
@@ -63,6 +98,8 @@ const TraverseHelper: React.ElementType = (
         type: "vertical" | "horizontal" | "full",
         path: PathElement[],
       ) => void
+      setMouse: (val: Mouse) => void,
+      mouse: Mouse | undefined,
     }
 ) => {
 
@@ -146,12 +183,16 @@ const TraverseHelper: React.ElementType = (
       {
         section.type !== "leaf" &&
         <>
-          <div className={`w-[${section.width}%] h-[${section.height}%] 
-                          flex-auto flex flex-${section.type}`}>
+          <div
+            className={`flex-auto flex flex-${section.type}`}
+            style={{ width: `${section.width}%`, height: `${section.height}%` }}
+          >
             {
               section.left !== undefined &&
               <TraverseHelper
                 section={section.left}
+                mouse={mouse}
+                setMouse={setMouse}
                 path={[...path, { direction: "left", type: section.type }]}
                 handleSplit={handleSplit} />
             }
@@ -159,6 +200,8 @@ const TraverseHelper: React.ElementType = (
               section.right !== undefined &&
               <TraverseHelper
                 section={section.right}
+                mouse={mouse}
+                setMouse={setMouse}
                 path={[...path, { direction: "right", type: section.type }]}
                 handleSplit={handleSplit} />
             }
@@ -170,28 +213,41 @@ const TraverseHelper: React.ElementType = (
         section.type === "leaf" &&
         <>
 
-          <div className={`relative w-[${section.width}%] h-[${section.height}%] border-2 border-black`}>
+          <div className={`relative border-2 w-full border-black`}
+            style={{ width: `${section.width}%`, height: `${section.height}%` }}
+          >
             <div className="absolute h-full w-full">
 
               {
                 !isTop(path) &&
-                <button className="absolute z-50 -translate-y-[7px] w-full h-2"
-                  onClick={() => {
+                <div className="absolute z-50 bg-green-100 -translate-y-[7px] w-full h-2 scale-y-[200%]
+                      hover:cursor-row-resize"
+                  onMouseDown={() => {
+                    setMouse({
+                      movement: "vertical",
+                      target: section.id,
+                    })
                   }}
                 />
               }
 
               {
                 !isLeft(path) &&
-                <button className="absolute z-50 -translate-x-[7px] w-2 h-full"
-                  onClick={() => {
+                <div className="absolute bg-red-100 z-50 -translate-x-[7px] w-2 h-full scale-x-[200%]
+                      hover:cursor-col-resize"
+                  onMouseDown={() => {
+                    setMouse({
+                      movement: "horizontal",
+                      target: section.id,
+                    })
                   }}
                 />
               }
 
-              <div className="z-10 relative h-full w-full">
-                <div className="flex flex-col absolute z-20 w-full h-full justify-center items-center">
-                  <div className="absolute w-full h-full p-2">
+
+              <div className="z-10 relative h-full w-full ">
+                <div className="flex flex-col absolute z-20 w-full h-full justify-center items-center ">
+                  <div className="absolute w-full h-full p-2 ">
                     {section.id}
                   </div>
                   <div className="flex-auto" />
@@ -231,27 +287,38 @@ const Traverse: React.ElementType = (
   {
     section,
     handleSplit,
+    setMouse,
+    mouse,
   }
     : {
       section: Section | undefined,
       handleSplit: (
         type: "vertical" | "horizontal" | "full",
         path: PathElement[],
-      ) => void
+      ) => void,
+      setMouse: (val: Mouse) => void,
+      mouse: Mouse | undefined,
     }
 ) => {
   return (
-    <TraverseHelper section={section} path={[]} handleSplit={handleSplit} />
+    <TraverseHelper
+      section={section}
+      mouse={mouse}
+      setMouse={setMouse}
+      path={[]}
+      handleSplit={handleSplit} />
   )
 }
 
 const ContentManagementSystem = () => {
 
-  const nextId = useRef(0);
+  const nextId = useRef(1);
+
+  const [mouse, setMouse] = useState<Mouse | undefined>(undefined);
 
   const [section, setSection] = useState<Section>({
     type: "leaf",
-    id: nextId.current++,
+    id: 0,
     width: 100,
     height: 100,
     parent: undefined,
@@ -291,15 +358,102 @@ const ContentManagementSystem = () => {
     else if (type === "horizontal")
       parent.type = "col";
 
+    leftLeaf.parent = parent;
+    rightLeaf.parent = parent;
+
     setSection(newSection);
+  }
+
+  const handleMouse = (event: React.MouseEvent, mouse: Mouse) => {
+
+    if (mouse === undefined)
+      return;
+
+    if (mouse.movement === "vertical") {
+
+      const target = getId(section, mouse.target);
+      const sibling = target.parent.left.id === target.id ?
+        target.parent.right : target.parent.left;
+
+      const movement = event.movementY / event.pageY * 100;
+
+      const g = (target.height - sibling.height) / 2;
+
+      let height = 50 + g;
+
+      height -= movement;
+
+      const diff = (height - 50) * 2;
+
+      if (diff > 0) {
+        sibling.height = 100 - diff;
+        target.height = 100;
+      }
+      if (diff < 0) {
+        target.height = 100 + diff;
+        sibling.height = 100;
+      }
+
+      sibling.height = Math.min(sibling.height, 100);
+      target.height = Math.min(target.height, 100);
+
+      sibling.height = Math.max(sibling.height, 0);
+      target.height = Math.max(target.height, 0);
+
+    }
+
+    else if (mouse.movement === "horizontal") {
+
+      const target = getId(section, mouse.target);
+      const sibling = target.parent.left.id === target.id ?
+        target.parent.right : target.parent.left;
+
+      const movement = event.movementX / event.pageX * 100;
+
+      const g = (target.width - sibling.width) / 2;
+
+      let width = 50 + g;
+
+      width -= movement;
+
+
+      const diff = (width - 50) * 2;
+
+      if (diff > 0) {
+        sibling.width = 100 - diff;
+        target.width = 100;
+      }
+      if (diff < 0) {
+        target.width = 100 + diff;
+        sibling.width = 100;
+      }
+
+      sibling.width = Math.min(sibling.width, 100);
+      target.width = Math.min(target.width, 100);
+
+      sibling.width = Math.max(sibling.width, 0);
+      target.width = Math.max(target.width, 0);
+
+    }
+
+    console.log(mouse.target);
+
+    setSection(structuredClone(section));
   }
 
   return (
     <>
-      <div className="bg-gray-100 h-screen">
+      <div className="bg-gray-100 h-screen" onMouseUp={() => setMouse(undefined)}>
         <div className="container m-auto h-screen content-center">
-          <div className="flex bg-gray-200 aspect-video">
-            <Traverse section={section} handleSplit={handleSplit} />
+          <div className="flex bg-gray-200 aspect-video select-none"
+            onMouseMove={(event: React.MouseEvent) => handleMouse(event, mouse)}
+          >
+            <Traverse
+              section={section}
+              mouse={mouse}
+              setMouse={setMouse}
+              handleSplit={handleSplit}
+              setSection={setSection} />
           </div>
         </div>
       </div>
