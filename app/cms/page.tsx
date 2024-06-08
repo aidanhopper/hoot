@@ -15,7 +15,9 @@ type Mouse = {
 }
 
 type Content = {
-  body: React.ElementType
+  lines: number;
+  text: String[];
+  className?: String;
 }
 
 type Section = {
@@ -32,6 +34,7 @@ type Section = {
 type State = {
   isEditingPosition: boolean;
   isEditingContent: boolean;
+  targetId: number;
   section: Section;
 }
 
@@ -113,6 +116,7 @@ const TraverseHelper: React.ElementType = (
     setMouse,
     mouse,
     state,
+    dispatch,
   }
     : {
       section: Section | undefined,
@@ -124,6 +128,7 @@ const TraverseHelper: React.ElementType = (
       setMouse: (val: Mouse) => void,
       mouse: Mouse | undefined,
       state: State,
+      dispatch: (action: any) => void
     }
 ) => {
 
@@ -201,6 +206,7 @@ const TraverseHelper: React.ElementType = (
     );
   }
 
+
   return (
 
     <>
@@ -221,12 +227,14 @@ const TraverseHelper: React.ElementType = (
                 mouse={mouse}
                 setMouse={setMouse}
                 path={[...path, { direction: "left", type: section.type }]}
+                dispatch={dispatch}
                 handleSplit={handleSplit} />
             }
             {
               section.right !== undefined &&
               <TraverseHelper
                 state={state}
+                dispatch={dispatch}
                 section={section.right}
                 mouse={mouse}
                 setMouse={setMouse}
@@ -305,21 +313,21 @@ const TraverseHelper: React.ElementType = (
 
             {
               state.isEditingContent &&
-              <div className="absolute content-end h-full w-full">
-                <div className="text-right">
-                  <button className="mr-2 mb-1 font-extrabold text-xl text-gray-500">
-                    T
-                  </button>
-                </div>
-              </div>
+              <button className="right-0 bottom-0 absolute mr-2 mb-1 font-extrabold text-2xl text-gray-500"
+                style={{ color: state.targetId === section.id ? '#2563eb' : '' }}
+                onClick={() => dispatch({ type: 'set_target_id', id: section.id })}>
+                E
+              </button>
             }
 
-            <div className="text-center w-[100%] h-[100%] content-center">
+            <div className="w-[100%] h-[100%]">
               {
                 section.content !== undefined &&
-                <>
-                  <section.content.body />
-                </>
+                <div className={`w-full h-full ${section.content.className}`}>
+                  <div>
+                    {section.content.text.map((s) => <>{s}</>)}
+                  </div>
+                </div>
 
               }
             </div>
@@ -340,6 +348,7 @@ const Traverse: React.ElementType = (
     setMouse,
     mouse,
     state,
+    dispatch,
   }
     : {
       section: Section | undefined,
@@ -350,11 +359,13 @@ const Traverse: React.ElementType = (
       setMouse: (val: Mouse) => void,
       mouse: Mouse | undefined,
       state: State,
+      dispatch: (action: any) => void,
     }
 ) => {
   return (
     <TraverseHelper
       section={section}
+      dispatch={dispatch}
       state={state}
       mouse={mouse}
       setMouse={setMouse}
@@ -467,9 +478,18 @@ const reducer = (state: any, action: any) => {
   if (action.type === 'set_section') {
     const newState: State = {
       ...state,
-      section: action.section
+      section: action.section,
     }
     return newState
+  }
+
+  if (action.type === 'set_target_id') {
+    const newState: State = {
+      ...state,
+      targetId: action.id,
+    }
+    return newState
+
   }
 
   return { ...state }
@@ -484,6 +504,7 @@ const ContentManagementSystem = () => {
   const [state, dispatch] = useReducer(reducer, {
     isEditingPosition: false,
     isEditingContent: false,
+    targetId: -1,
     section: {
       type: "leaf",
       id: 0,
@@ -521,6 +542,9 @@ const ContentManagementSystem = () => {
     parent.left = leftLeaf;
     parent.right = rightLeaf;
 
+    leftLeaf.content = parent.content;
+    parent.content = undefined;
+
     if (type === "vertical")
       parent.type = "row";
 
@@ -534,7 +558,6 @@ const ContentManagementSystem = () => {
   }
 
   const handleMouse = (event: React.MouseEvent, mouse: Mouse) => {
-
     if (mouse === undefined)
       return;
 
@@ -544,32 +567,60 @@ const ContentManagementSystem = () => {
 
     else if (mouse.movement === "horizontal")
       dispatch({ type: 'set_section', section: handleHorizontalMovement(event, mouse, state.section) });
-
   }
+
+  const textareaContent = useRef<HTMLTextAreaElement>();
+
+  const handleInsertText = () => {
+    const root = structuredClone(state.section);
+    const target = getId(root, state.targetId);
+
+    target.content = {
+      lines: 1,
+      text: [textareaContent.current.value],
+      className: "text-center content-center font-bold "
+    }
+
+    console.log(root)
+
+    dispatch({ type: 'set_section', section: root })
+  }
+
 
   return (
     <>
       <Navbar />
-      <div className="flex bg-gray-100 h-screen" onMouseUp={() => setMouse(undefined)}>
+      <div className="flex bg-gray-100 h-screen overflow-hidden text-black" onMouseUp={() => setMouse(undefined)}>
         <div className="flex w-full">
-          <div className="flex-auto relative">
+          <div className="flex-none w-[350px]">
             {
               state.isEditingContent &&
               <div className="bg-white w-[350px] h-full" >
                 <div className="flex flex-col h-full px-3 pt-20">
-                  <div className="bg-red-100">
-                      asdf
-                  </div>
+                  {
+                    state.targetId !== -1 &&
+                    <div className="flex flex-col text-center w-full text-gray-600">
+                      <textarea className="flex-auto border-black border-b-4 mb-2" ref={textareaContent} />
+                      <button className="font-bold flex-auto border-b-4 pb-1 border-gray-600 duration-100
+                        hover:border-yellow-400 hover:text-yellow-400"
+                        onClick={handleInsertText}
+                      >
+                        Insert Text
+                      </button>
+                    </div>
+                  }
                 </div>
               </div>
             }
           </div>
-          <div className="flex-auto container h-screen content-center m-auto w-full">
-            <div className="bg-white aspect-video select-none shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
+          <div className="flex-col flex-auto container content-center m-auto px-2">
+            <div className="flex bg-white justify-center aspect-video select-none w-full
+              shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
               onMouseMove={(event: React.MouseEvent) => handleMouse(event, mouse)}
             >
               <Traverse
                 section={state.section}
+                dispatch={dispatch}
                 state={state}
                 mouse={mouse}
                 setMouse={setMouse}
@@ -593,7 +644,7 @@ const ContentManagementSystem = () => {
               Edit Content
             </button>
           </div>
-          <div className="flex-auto" />
+          <div className="flex-none w-[350px]" />
         </div>
       </div>
     </>

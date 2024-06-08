@@ -7,6 +7,9 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    screens: {
+      '3xl': '1920px'
+    },
     extend: {
       keyframes: {
         'fade-down': {
