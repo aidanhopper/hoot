@@ -304,9 +304,9 @@ const TraverseHelper: React.ElementType = (
 
             {
               state.isEditingContent &&
-              <div className="content-end h-full">
-                <div className="m-1 text-right">
-                  <button className="mr-1 text-right text-gray-500 font-extrabold text-xl">
+              <div className="absolute content-end h-full w-full">
+                <div className="text-right">
+                  <button className="mr-2 mb-1 font-extrabold text-xl text-gray-500">
                     T
                   </button>
                 </div>
