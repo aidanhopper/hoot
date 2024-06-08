@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useReducer } from 'react';
+import Navbar from '../components/navbar';
 
 
 type PathElement = {
@@ -548,35 +549,51 @@ const ContentManagementSystem = () => {
 
   return (
     <>
-      <div className="bg-gray-100 h-screen" onMouseUp={() => setMouse(undefined)}>
-        <div className="container m-auto h-screen content-center">
-          <div className="flex bg-white aspect-video select-none shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
-            onMouseMove={(event: React.MouseEvent) => handleMouse(event, mouse)}
-          >
-            <Traverse
-              section={state.section}
-              state={state}
-              mouse={mouse}
-              setMouse={setMouse}
-              handleSplit={handleSplit}
-              setSection={(section: Section) => dispatch({ type: 'set_section', section: section })} />
+      <Navbar />
+      <div className="flex bg-gray-100 h-screen" onMouseUp={() => setMouse(undefined)}>
+        <div className="flex w-full">
+          <div className="flex-auto relative">
+            {
+              state.isEditingContent &&
+              <div className="bg-white w-[350px] h-full" >
+                <div className="flex flex-col h-full px-3 pt-20">
+                  <div className="bg-red-100">
+                      asdf
+                  </div>
+                </div>
+              </div>
+            }
           </div>
-          <button className="shadow-[5px_5px_2px_rgb(0,0,0,0.25)] duration-100
+          <div className="flex-auto container h-screen content-center m-auto w-full">
+            <div className="bg-white aspect-video select-none shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
+              onMouseMove={(event: React.MouseEvent) => handleMouse(event, mouse)}
+            >
+              <Traverse
+                section={state.section}
+                state={state}
+                mouse={mouse}
+                setMouse={setMouse}
+                handleSplit={handleSplit}
+                setSection={(section: Section) => dispatch({ type: 'set_section', section: section })} />
+            </div>
+            <button className="shadow-[5px_5px_2px_rgb(0,0,0,0.25)] duration-100
               hover:scale-[101%] mt-5 lg:mb-0 p-5 rounded-xl bg-white text-lg
               border-gray-200 border-2 text-gray-600"
-            style={{ background: state.isEditingPosition ? "#f3f4f6" : "white" }}
-            onClick={() => dispatch({ type: 'toggle_edit_position' })}
-          >
-            Edit Position
-          </button>
-          <button className="shadow-[5px_5px_2px_rgb(0,0,0,0.25)] duration-100
+              style={{ background: state.isEditingPosition ? "#f3f4f6" : "white" }}
+              onClick={() => dispatch({ type: 'toggle_edit_position' })}
+            >
+              Edit Position
+            </button>
+            <button className="shadow-[5px_5px_2px_rgb(0,0,0,0.25)] duration-100
               hover:scale-[101%] mt-5 lg:mb-0 p-5 rounded-xl bg-white text-lg
               border-gray-200 border-2 text-gray-600 ml-5"
-            style={{ background: state.isEditingContent ? "#f3f4f6" : "white" }}
-            onClick={() => dispatch({ type: 'toggle_edit_content' })}
-          >
-            Edit Content
-          </button>
+              style={{ background: state.isEditingContent ? "#f3f4f6" : "white" }}
+              onClick={() => dispatch({ type: 'toggle_edit_content' })}
+            >
+              Edit Content
+            </button>
+          </div>
+          <div className="flex-auto" />
         </div>
       </div>
     </>
