@@ -16,8 +16,8 @@ type Mouse = {
 
 type Content = {
   lines: number;
-  text: String[];
-  className?: String;
+  text: string[];
+  className?: string;
 }
 
 type Section = {
@@ -452,54 +452,80 @@ const handleVerticalMovement = (event: React.MouseEvent, mouse: Mouse, section: 
   return structuredClone(section)
 }
 
-const reducer = (state: any, action: any) => {
-
-
-  if (action.type === 'toggle_edit_position') {
-    const newState: State = {
-      ...state,
-      isEditingContent: false,
-      isEditingPosition: state.isEditingPosition === true ? false : true
-    }
-    console.log(newState)
-    return newState;
-  }
-
-  if (action.type === 'toggle_edit_content') {
-    const newState: State = {
-      ...state,
-      isEditingContent: state.isEditingContent === true ? false : true,
-      isEditingPosition: false,
-    }
-    console.log(newState)
-    return newState;
-  }
-
-  if (action.type === 'set_section') {
-    const newState: State = {
-      ...state,
-      section: action.section,
-    }
-    return newState
-  }
-
-  if (action.type === 'set_target_id') {
-    const newState: State = {
-      ...state,
-      targetId: action.id,
-    }
-    return newState
-
-  }
-
-  return { ...state }
-}
-
 const ContentManagementSystem = () => {
 
   const nextId = useRef(1);
 
   const [mouse, setMouse] = useState<Mouse | undefined>(undefined);
+
+  const textContent = useRef<HTMLTextAreaElement>();
+  const classNameContent = useRef<HTMLTextAreaElement>();
+
+  const reducer = (state: any, action: any) => {
+
+
+    if (action.type === 'toggle_edit_position') {
+      const newState: State = {
+        ...state,
+        isEditingContent: false,
+        isEditingPosition: state.isEditingPosition === true ? false : true
+      }
+      console.log(newState)
+      return newState;
+    }
+
+    if (action.type === 'toggle_edit_content') {
+      const newState: State = {
+        ...state,
+        isEditingContent: state.isEditingContent === true ? false : true,
+        isEditingPosition: false,
+      }
+
+      if (!newState.isEditingContent) {
+        newState.targetId = -1;
+      }
+
+      return newState;
+    }
+
+    if (action.type === 'set_section') {
+      const newState: State = {
+        ...state,
+        section: action.section,
+      }
+      return newState
+    }
+
+    if (action.type === 'set_target_id') {
+      const newState: State = {
+        ...state,
+        targetId: action.id,
+      }
+
+      const section = getId(newState.section, action.id);
+      console.log(section.content);
+      console.log(textContent);
+      console.log(classNameContent);
+
+      if (section !== undefined && section.content !== undefined) {
+        if (textContent.current !== null && textContent.current !== undefined)
+          textContent.current.value = section.content.text[0];
+        if (classNameContent.current !== null && classNameContent.current !== undefined)
+          classNameContent.current.value = section.content.className;
+      } else {
+        if (textContent.current !== null && textContent.current !== undefined)
+          textContent.current.value = "";
+        if (classNameContent.current !== null && classNameContent.current !== undefined)
+          classNameContent.current.value = "";
+      }
+
+      return newState
+
+    }
+
+    return { ...state }
+  }
+
 
   const [state, dispatch] = useReducer(reducer, {
     isEditingPosition: false,
@@ -569,7 +595,6 @@ const ContentManagementSystem = () => {
       dispatch({ type: 'set_section', section: handleHorizontalMovement(event, mouse, state.section) });
   }
 
-  const textareaContent = useRef<HTMLTextAreaElement>();
 
   const handleInsertText = () => {
     const root = structuredClone(state.section);
@@ -577,11 +602,9 @@ const ContentManagementSystem = () => {
 
     target.content = {
       lines: 1,
-      text: [textareaContent.current.value],
-      className: "text-center content-center font-bold "
+      text: [textContent.current.value],
+      className: classNameContent.current.value,
     }
-
-    console.log(root)
 
     dispatch({ type: 'set_section', section: root })
   }
@@ -600,7 +623,8 @@ const ContentManagementSystem = () => {
                   {
                     state.targetId !== -1 &&
                     <div className="flex flex-col text-center w-full text-gray-600">
-                      <textarea className="flex-auto border-black border-b-4 mb-2" ref={textareaContent} />
+                      <textarea className="flex-auto border-black border-b-4 mb-2" ref={textContent} />
+                      <textarea className="flex-auto border-black border-b-4 mb-2" ref={classNameContent} />
                       <button className="font-bold flex-auto border-b-4 pb-1 border-gray-600 duration-100
                         hover:border-yellow-400 hover:text-yellow-400"
                         onClick={handleInsertText}
@@ -639,7 +663,9 @@ const ContentManagementSystem = () => {
               hover:scale-[101%] mt-5 lg:mb-0 p-5 rounded-xl bg-white text-lg
               border-gray-200 border-2 text-gray-600 ml-5"
               style={{ background: state.isEditingContent ? "#f3f4f6" : "white" }}
-              onClick={() => dispatch({ type: 'toggle_edit_content' })}
+              onClick={() => {
+                dispatch({ type: 'toggle_edit_content' })
+              }}
             >
               Edit Content
             </button>
