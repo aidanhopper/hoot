@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useReducer } from 'react';
 import Navbar from '../components/navbar';
+import LZString from 'lz-string';
 
 
 type PathElement = {
@@ -17,7 +18,43 @@ type Mouse = {
 type Content = {
   lines: number;
   text: string[];
-  className?: string;
+  style: React.CSSProperties;
+}
+
+type MenuOption = {
+  title: string;
+  type: 'dropdown' | 'typed' | 'button';
+  inputType?: string;
+  options?: string[];
+  placeholder?: string;
+  selected?: number;
+  content?: string;
+  isActive?: boolean;
+}
+
+type MenuOptions = {
+  fontSize: MenuOption;
+  fontWeight: MenuOption;
+  verticalAlign: MenuOption;
+  horizontalAlign: MenuOption;
+  textAlign: MenuOption;
+  backgroundColor: MenuOption;
+  margin: MenuOption;
+}
+
+type Action = {
+  type: 'set_target_id' | 'set_section' | 'toggle_edit_position' | 'toggle_edit_content' | 'set_state';
+  section?: Section;
+  id?: number;
+  state?: State;
+}
+
+type State = {
+  isEditingPosition: boolean;
+  isEditingContent: boolean;
+  targetId: number;
+  section: Section;
+  options: MenuOptions;
 }
 
 type Section = {
@@ -29,13 +66,6 @@ type Section = {
   content?: Content;
   width: number;
   height: number;
-}
-
-type State = {
-  isEditingPosition: boolean;
-  isEditingContent: boolean;
-  targetId: number;
-  section: Section;
 }
 
 const isTop = (path: PathElement[]) => {
@@ -106,6 +136,85 @@ const depth = (section: Section | undefined, id: number): number => {
 
 const del = (section: Section) => {
 
+}
+
+const Menu = ({ option, className }: { option: MenuOption, className?: string }) => {
+
+  const [selectedOption, setSelectedOption] = useState(
+    option.selected !== undefined ? option.selected : -1
+  );
+
+  const inputRef = useRef<HTMLInputElement>();
+
+  useEffect(() => {
+    if (option.type === 'typed') {
+      if (option.content !== undefined)
+        inputRef.current.value = option.content;
+      else
+        inputRef.current.value = "";
+    }
+  }, [inputRef]);
+
+  useEffect(() => {
+    option.selected = selectedOption;
+  }, [selectedOption])
+
+  return (
+
+    <div className={`${className}`}>
+      {
+        option.type === 'dropdown' &&
+        <div className="m-4 p-2 flex-auto max-w-40 bg">
+          <div className="duration-100 font-bold border-gray-400 border-b-2">
+            {option.title}
+          </div>
+          {
+            true &&
+            <div className="flex flex-col flex-auto">
+              {
+                option.options.map((s: string, index: number) => {
+                  return (
+                    <button key={index} className="flex-auto hover:text-yellow-400 duration-100"
+                      onClick={() => setSelectedOption(index)}
+                    >
+                      <div
+                        style={{
+                          fontWeight: selectedOption === index ? 'bold' : '',
+                          borderBottom: selectedOption === index ? '4px' : '',
+                          borderBottomColor: selectedOption === index ? 'black' : '',
+                        }}
+                      >
+                        {s}
+                      </div>
+                    </button>
+                  );
+                })
+              }
+            </div>
+          }
+        </div>
+      }
+
+      {
+        option.type === 'typed' &&
+        <div className="my-4 flex flex-col h-[40px] text-left rounded-lg w-full">
+          <div className="flex-auto text-xs font-bold text-gray-500">
+            {option.title}
+          </div>
+          <div className="flex-auto">
+            <input type={option.inputType} className="w-full outline-none border-b-2 border-gray-400"
+              placeholder={option.placeholder}
+              ref={inputRef}
+              onInput={(event) => {
+                option.content = event.currentTarget.value;
+              }}
+            />
+          </div>
+        </div>
+      }
+
+    </div>
+  );
 }
 
 const TraverseHelper: React.ElementType = (
@@ -248,7 +357,7 @@ const TraverseHelper: React.ElementType = (
       {
         section.type === "leaf" &&
         <>
-          <div className={`relative w-full border-gray-200 border`}
+          <div className={`relative w-full border-gray-200 border `}
             style={{ width: `${section.width}%`, height: `${section.height}%` }}
             onMouseLeave={() => {
               setDisplayVerticalSplit(false);
@@ -320,12 +429,14 @@ const TraverseHelper: React.ElementType = (
               </button>
             }
 
-            <div className="w-[100%] h-[100%]">
+            <div className="w-[100%] h-[100%]"
+              style={{ background: section.content !== undefined ? section.content.style.background : '' }}
+            >
               {
                 section.content !== undefined &&
-                <div className={`w-full h-full ${section.content.className}`}>
+                <div className={`w-full h-full`} style={{ ...section.content.style }}>
                   <div>
-                    {section.content.text.map((s) => <>{s}</>)}
+                    {section.content.text.map((s, index) => <div key={index}>{s}&nbsp;</div>)}
                   </div>
                 </div>
 
@@ -459,10 +570,8 @@ const ContentManagementSystem = () => {
   const [mouse, setMouse] = useState<Mouse | undefined>(undefined);
 
   const textContent = useRef<HTMLTextAreaElement>();
-  const classNameContent = useRef<HTMLTextAreaElement>();
 
-  const reducer = (state: any, action: any) => {
-
+  const reducer = (state: State, action: Action): State => {
 
     if (action.type === 'toggle_edit_position') {
       const newState: State = {
@@ -503,42 +612,93 @@ const ContentManagementSystem = () => {
       }
 
       const section = getId(newState.section, action.id);
-      console.log(section.content);
-      console.log(textContent);
-      console.log(classNameContent);
 
       if (section !== undefined && section.content !== undefined) {
         if (textContent.current !== null && textContent.current !== undefined)
           textContent.current.value = section.content.text[0];
-        if (classNameContent.current !== null && classNameContent.current !== undefined)
-          classNameContent.current.value = section.content.className;
       } else {
         if (textContent.current !== null && textContent.current !== undefined)
           textContent.current.value = "";
-        if (classNameContent.current !== null && classNameContent.current !== undefined)
-          classNameContent.current.value = "";
       }
 
       return newState
 
     }
 
+    if (action.type === 'set_state') {
+      return { ...action.state }
+    }
+
     return { ...state }
   }
 
 
-  const [state, dispatch] = useReducer(reducer, {
+  const [state, dispatch] = useReducer<(state: State, action: Action) => State>(reducer, {
     isEditingPosition: false,
     isEditingContent: false,
     targetId: -1,
+    options: {
+      fontSize: {
+        title: 'font size',
+        type: 'typed',
+        inputType: 'number',
+        placeholder: '15',
+      },
+      fontWeight: {
+        title: 'font weight',
+        type: 'dropdown',
+        options: ['normal', 'bold'],
+        selected: 0,
+      },
+      verticalAlign: {
+        title: 'vertical alignment',
+        type: 'dropdown',
+        options: ['start', 'center', 'end'],
+        selected: 0,
+      },
+      horizontalAlign: {
+        title: 'horizontal alignment',
+        type: 'dropdown',
+        options: ['left', 'center', 'right'],
+        selected: 0,
+      },
+      textAlign: {
+        title: 'text alignment',
+        type: 'dropdown',
+        options: ['left', 'center', 'right'],
+        selected: 0,
+      },
+      margin: {
+        title: 'padding',
+        type: 'typed',
+        inputType: 'number',
+      },
+      backgroundColor: {
+        title: 'background color',
+        type: 'typed',
+        inputType: 'text',
+        placeholder: '#FFFFFF',
+      }
+    },
     section: {
-      type: "leaf",
+      type: 'leaf',
       id: 0,
       width: 100,
       height: 100,
       parent: undefined,
     }
-  })
+  });
+
+  useEffect(() => {
+    const target = getId(state.section, state.targetId);
+    if (
+      textContent.current !== undefined &&
+      textContent.current !== null &&
+      target !== undefined &&
+      target.content !== undefined
+    )
+      textContent.current.value = target.content.text[0];
+  }, [state.targetId, state.section]);
 
   const handleSplit = (
     type: "vertical" | "horizontal" | "full",
@@ -600,44 +760,100 @@ const ContentManagementSystem = () => {
     const root = structuredClone(state.section);
     const target = getId(root, state.targetId);
 
+    const assignDropdownOption = (option: MenuOption) => {
+      return `${option.selected !== -1 ?
+        option.options[option.selected] : ''}` as any;
+    }
+
     target.content = {
       lines: 1,
       text: [textContent.current.value],
-      className: classNameContent.current.value,
+      style: {
+        fontSize: `${parseFloat(state.options.fontSize.content) / 10}vw`,
+        justifyContent: assignDropdownOption(state.options.horizontalAlign),
+        alignItems: assignDropdownOption(state.options.verticalAlign),
+        background: state.options.backgroundColor.content,
+        textAlign: assignDropdownOption(state.options.textAlign),
+        fontWeight: assignDropdownOption(state.options.fontWeight),
+        display: 'inline-flex',
+        lineHeight: 'full',
+        overflow: 'hidden',
+      }
     }
 
     dispatch({ type: 'set_section', section: root })
   }
 
+  useEffect(() => {
+    const stateString = new URLSearchParams(window.location.search).get('state');
+    if (stateString !== null) {
+      const newState = JSON.parse(LZString.decompressFromEncodedURIComponent(stateString));
+      console.log(newState);
+      if (newState !== null) {
+        dispatch({ type: 'set_state', state: newState })
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+
+    const id = setInterval(() => {
+      const param = JSON.stringify(state, (key, value) => {
+        if (key === 'parent')
+          return undefined
+        else
+          return value;
+      });
+      if (window !== undefined)
+        window.history.pushState(
+          null,
+          null,
+          `/cms?state=${LZString.compressToEncodedURIComponent(param)}`
+        );
+    }, 1000);
+
+    return () => clearInterval(id);
+
+  }, [state]);
 
   return (
     <>
       <Navbar />
-      <div className="flex bg-gray-100 h-screen overflow-hidden text-black" onMouseUp={() => setMouse(undefined)}>
+      <div className="flex bg-gray-100 h-screen text-black" onMouseUp={() => setMouse(undefined)}>
         <div className="flex w-full">
           <div className="flex-none w-[350px]">
             {
               state.isEditingContent &&
-              <div className="bg-white w-[350px] h-full" >
-                <div className="flex flex-col h-full px-3 pt-20">
+              <div className="bg-white w-[350px] h-full duration-100" >
+                <div className="flex flex-col h-full px-3 pt-20 shadow-[5px_5px_2px_rgb(0,0,0,0.25)]">
                   {
                     state.targetId !== -1 &&
-                    <div className="flex flex-col text-center w-full text-gray-600">
+                    <div className="flex flex-col text-center w-full text-gray-600 overflow-y-scroll">
                       <textarea className="flex-auto border-black border-b-4 mb-2" ref={textContent} />
-                      <textarea className="flex-auto border-black border-b-4 mb-2" ref={classNameContent} />
-                      <button className="font-bold flex-auto border-b-4 pb-1 border-gray-600 duration-100
-                        hover:border-yellow-400 hover:text-yellow-400"
-                        onClick={handleInsertText}
-                      >
-                        Insert Text
-                      </button>
+                      <div className="flex flex-wrap flex-auto w-full content-center justify-center">
+                        <Menu option={state.options.fontSize} className="" />
+                        <Menu option={state.options.fontWeight} className="" />
+                        <Menu option={state.options.verticalAlign} className="" />
+                        <Menu option={state.options.horizontalAlign} className="" />
+                        <Menu option={state.options.textAlign} className="" />
+                        <Menu option={state.options.margin} className="" />
+                        <Menu option={state.options.backgroundColor} className="" />
+                      </div>
+                      <div className="flex-auto pt-4">
+                        <button className="font-bold flex-auto border-b-4 pb-1 border-gray-600 duration-100
+                          hover:border-yellow-400 hover:text-yellow-400"
+                          onClick={handleInsertText}
+                        >
+                          Insert Text
+                        </button>
+                      </div>
                     </div>
                   }
                 </div>
               </div>
             }
           </div>
-          <div className="flex-col flex-auto container content-center m-auto px-2">
+          <div className="flex-col flex-none w-[60%] container content-center m-auto px-2">
             <div className="flex bg-white justify-center aspect-video select-none w-full
               shadow-[5px_5px_2px_rgb(0,0,0,0.25)]"
               onMouseMove={(event: React.MouseEvent) => handleMouse(event, mouse)}
